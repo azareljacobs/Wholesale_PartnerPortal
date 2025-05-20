@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Wholesale\PartnerPortal\Block;
 
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
@@ -27,16 +25,6 @@ class PartnerList extends Template implements IdentityInterface
      */
     private $partnerRepository;
 
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    private $searchCriteriaBuilder;
-
-    /**
-     * @var SortOrderBuilder
-     */
-    private $sortOrderBuilder;
-    
     /**
      * @var CollectionFactory
      */
@@ -65,8 +53,6 @@ class PartnerList extends Template implements IdentityInterface
     /**
      * @param Context $context
      * @param PartnerRepositoryInterface $partnerRepository
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param SortOrderBuilder $sortOrderBuilder
      * @param CollectionFactory $collectionFactory
      * @param LoggerInterface $logger
      * @param PartnerMediaUrlService $mediaUrlService
@@ -75,16 +61,12 @@ class PartnerList extends Template implements IdentityInterface
     public function __construct(
         Context $context,
         PartnerRepositoryInterface $partnerRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        SortOrderBuilder $sortOrderBuilder,
         CollectionFactory $collectionFactory,
         LoggerInterface $logger,
         PartnerMediaUrlService $mediaUrlService,
         array $data = []
     ) {
         $this->partnerRepository = $partnerRepository;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->sortOrderBuilder = $sortOrderBuilder;
         $this->collectionFactory = $collectionFactory;
         $this->logger = $logger;
         $this->mediaUrlService = $mediaUrlService;

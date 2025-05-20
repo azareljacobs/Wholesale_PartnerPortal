@@ -88,7 +88,7 @@ interface PartnerInterface
      * @param int $id
      * @return $this
      */
-    public function setId($id): PartnerInterface;
+    public function setId(int $id): PartnerInterface;
 
     /**
      * Get partner name
