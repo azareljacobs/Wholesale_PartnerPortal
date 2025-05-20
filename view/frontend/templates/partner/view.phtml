@@ -2,13 +2,12 @@
 /**
  * Partner view template
  *
- * @var $block \Magento\Framework\View\Element\Template
+ * @var $block \Wholesale\PartnerPortal\Block\PartnerView
  * @var $viewModel \Wholesale\PartnerPortal\ViewModel\Partner
  */
 
 $viewModel = $block->getData('partner_view_model');
-$slug = $block->getRequest()->getParam('slug');
-$partner = $viewModel->getPartnerBySlug($slug);
+$partner = $block->getPartner();
 ?>
 <?php if ($partner): ?>
     <div class="wholesale-partner-view" itemscope itemtype="https://schema.org/Organization">

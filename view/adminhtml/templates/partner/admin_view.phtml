@@ -20,6 +20,13 @@
             </div>
             <div class="partner-title">
                 <h1><?= $block->escapeHtml($partner->getName()) ?></h1>
+                <?php if ($frontendUrl = $block->getFrontendUrl()): ?>
+                    <div class="frontend-link">
+                        <a href="<?= $block->escapeUrl($frontendUrl) ?>" target="_blank" rel="noopener">
+                            <span class="icon">&#128065;</span> <?= $block->escapeHtml(__('Open Partner Page in New Window')) ?>
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
         
