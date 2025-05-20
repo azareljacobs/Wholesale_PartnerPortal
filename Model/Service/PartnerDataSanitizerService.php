@@ -8,7 +8,6 @@
 
 namespace Wholesale\PartnerPortal\Model\Service;
 
-use Psr\Log\LoggerInterface;
 use Wholesale\PartnerPortal\Api\Data\PartnerInterface;
 
 /**
@@ -16,11 +15,6 @@ use Wholesale\PartnerPortal\Api\Data\PartnerInterface;
  */
 class PartnerDataSanitizerService
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
     /**
      * @var array
      */
@@ -36,12 +30,10 @@ class PartnerDataSanitizerService
     ];
 
     /**
-     * @param LoggerInterface $logger
+     * Constructor
      */
-    public function __construct(
-        LoggerInterface $logger
-    ) {
-        $this->logger = $logger;
+    public function __construct()
+    {
     }
 
     /**
@@ -132,7 +124,6 @@ class PartnerDataSanitizerService
             // Case 1: Array with delete flag - mark for deletion
             if (isset($data[PartnerInterface::LOGO]['delete']) && $data[PartnerInterface::LOGO]['delete'] == '1') {
                 // Keep the delete flag in the array format for Controller/Save.php to process
-                $this->logger->debug('Logo marked for deletion');
                 return $data;
             }
             
@@ -140,7 +131,6 @@ class PartnerDataSanitizerService
             if (isset($data[PartnerInterface::LOGO][0]['delete']) && $data[PartnerInterface::LOGO][0]['delete'] == '1') {
                 // Restructure to standard format
                 $data[PartnerInterface::LOGO] = ['delete' => '1'];
-                $this->logger->debug('Logo marked for deletion (restructured)');
                 return $data;
             }
 
@@ -148,7 +138,6 @@ class PartnerDataSanitizerService
             if (isset($data[PartnerInterface::LOGO][0]['name']) &&
                 isset($data[PartnerInterface::LOGO][0]['tmp_name'])) {
                 $data[PartnerInterface::LOGO] = $data[PartnerInterface::LOGO][0]['name'];
-                $this->logger->debug('New logo upload detected: ' . $data[PartnerInterface::LOGO]);
                 return $data;
             }
 
@@ -156,18 +145,15 @@ class PartnerDataSanitizerService
             if (isset($data[PartnerInterface::LOGO]['name']) &&
                 isset($data[PartnerInterface::LOGO]['tmp_name'])) {
                 $data[PartnerInterface::LOGO] = $data[PartnerInterface::LOGO]['name'];
-                $this->logger->debug('New logo upload detected (direct): ' . $data[PartnerInterface::LOGO]);
                 return $data;
             }
 
             // If we couldn't understand the array format, keep the existing value
             if (isset($data['partner_id'])) {
                 // For existing partner, preserve current logo
-                $this->logger->debug('Preserving existing logo for partner ID: ' . $data['partner_id']);
                 unset($data[PartnerInterface::LOGO]);
             } else {
                 // For new partner, clear logo field
-                $this->logger->debug('Clearing logo field for new partner');
                 $data[PartnerInterface::LOGO] = '';
             }
         }
