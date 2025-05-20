@@ -6,7 +6,11 @@
     </head>
     <body>
         <referenceContainer name="content">
-            <block class="Wholesale\PartnerPortal\Block\PartnerView" name="partner.view" template="Wholesale_PartnerPortal::partner/view.phtml" />
+            <block class="Magento\Framework\View\Element\Template" name="partner.view" template="Wholesale_PartnerPortal::partner/view.phtml">
+                <arguments>
+                    <argument name="partner_view_model" xsi:type="object">Wholesale\PartnerPortal\ViewModel\Partner</argument>
+                </arguments>
+            </block>
         </referenceContainer>
     </body>
 </page>

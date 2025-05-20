@@ -102,7 +102,7 @@ This interface provides methods for managing `Partner` entities.
 -   `deleteById($partnerId)`: Deletes a partner by its ID.
 -   `getList(SearchCriteriaInterface $searchCriteria)`: Retrieves a list of partners based on search criteria, returning `PartnerSearchResultsInterface`.
 
-The repository offers features like optional filtering for active/inactive partners and repository-level caching. It also provides dedicated methods such as `getActiveById()`, `getActiveBySlug()`, and `getActiveList()` to keep business logic clean and behavior consistent.
+The repository offers features like optional filtering for active/inactive partners and repository-level caching with proper invalidation. The repository implements in-memory caching of loaded entities with cache invalidation on save and delete operations to prevent stale data. It also provides dedicated methods such as `getActiveById()`, `getActiveBySlug()`, and `getActiveList()` to keep business logic clean and behavior consistent.
 
 ### GraphQL Schema
 
@@ -149,40 +149,20 @@ This is the primary model for the `Partner` entity.
 
 -   Implements `Wholesale\PartnerPortal\Api\Data\PartnerInterface` and `Magento\Framework\DataObject\IdentityInterface`.
 -   Inherits from `Magento\Framework\Model\AbstractExtensibleModel` to support extension attributes.
--   **Cache Tag**: `wholesale_partner` (Constant: `CACHE_TAG`).
+-   **Cache Tag**: `wholesale_partner` (Constant: `CACHE_TAG`). Used for Full Page Cache (FPC) invalidation.
+-   **Cache Identities**: The `getIdentities()` method returns both the general cache tag and specific partner ID tag, ensuring proper cache invalidation when partners are modified.
 -   **Event Prefix**: `wholesale_partner`.
 -   **Resource Model**: Initialises with `Wholesale\PartnerPortal\Model\ResourceModel\Partner::class`.
--   Implements magic `__call` method to handle dynamic getters/setters, reducing code duplication:
-    ```php
-    /**
-     * Get dynamic data via magic method
-     *
-     * @param string $method
-     * @param array $args
-     * @return mixed
-     */
-    public function __call($method, $args)
-    {
-        // Convert getFieldName to field_name for data access
-        if (strpos($method, 'get') === 0) {
-            $key = $this->snakeCase(substr($method, 3));
-            return $this->getData($key);
-        }
-        // Convert setFieldName to field_name for data setting
-        if (strpos($method, 'set') === 0) {
-            $key = $this->snakeCase(substr($method, 3));
-            return $this->setData($key, isset($args[0]) ? $args[0] : null);
-        }
-        return parent::__call($method, $args);
-    }
-    ```
--   Provides explicit implementations for all methods defined in `PartnerInterface` for backward compatibility.
+-   Provides explicit implementations for all methods defined in `PartnerInterface`, with proper type hints and return types.
+-   Each getter/setter method directly accesses data using the constants defined in the interface (e.g., `self::NAME`, `self::SLUG`), ensuring consistent field access.
 -   Supports extension attributes through `getExtensionAttributes()` and `setExtensionAttributes()` methods.
 -   Includes comprehensive DocBlock comments for all interface constants.
 
 ### `Model\PartnerRepository.php`
 
 This class implements `PartnerRepositoryInterface` and handles the business logic for retrieving, saving, and deleting partner data. It uses the `Partner` model, `Partner` resource model, and collection classes.
+
+The repository implements an in-memory caching mechanism using a private `$partnerCache` array to store loaded entities. This improves performance by avoiding redundant database queries within the same request. The cache is properly invalidated in the `save()` and `delete()` methods to prevent stale data when entities are modified or removed.
 
 Key methods include:
 - `getById($partnerId)`: Retrieves a partner by ID
@@ -247,6 +227,7 @@ The module incorporates several dedicated service classes to follow the Command/
     -   `ResourceModel/`: Resource models and collections for database interaction.
     -   `Resolver/`: GraphQL resolvers for partner data
     -   `Service/`: Dedicated service classes for business logic operations
+-   **`ViewModel/`**: Contains view model classes that provide data to templates.
 -   **`Ui/`**: Contains UI component configurations and related classes.
     -   `Component/`: UI component classes, often data providers or form modifiers.
 -   **`view/`**: Contains template files, layout XML files, and web assets (CSS, JS, images).
@@ -335,7 +316,7 @@ The module provides frontend pages to display a list of partners and individual 
     -   **URL**: `wholesale/partners/view/slug/[slug]` (e.g., `wholesale/partners/view/slug/acme-inc`)
     -   **Controller**: `Wholesale\PartnerPortal\Controller\Partners\View`
     -   **Layout**: `view/frontend/layout/wholesale_partners_view.xml`
-    -   **Block**: `Wholesale\PartnerPortal\Block\PartnerView`
+    -   **Block**: `Magento\Framework\View\Element\Template` (using `Wholesale\PartnerPortal\ViewModel\Partner` view model)
     -   **Template**: `view/frontend/templates/partner/view.phtml`
     -   **Functionality**: This page displays detailed information for a single partner, identified by the `slug` parameter in the URL. The specific details shown depend on the `view.phtml` template (e.g., name, logo, description, website, contact email).
     -   **Security and Edge Cases**:
@@ -427,10 +408,11 @@ For detailed GraphQL API documentation, see `docs/graphql.md` in the module dire
 -   **Blocks**:
     -   **Admin Blocks**: Prepare data and UI for admin forms and grids.
     -   **Frontend Blocks**: Provide data to templates for rendering partner information:
-        -   `PartnerList.php`: Retrieves a filtered collection of active partners and provides methods for generating partner URLs and logo URLs.
-        -   `PartnerView.php`: Gets partner data either from URL parameters or registry, and provides methods for accessing partner attributes and generating logo URLs.
+        -   `PartnerList.php`: Retrieves a filtered collection of active partners and provides methods for generating partner URLs and logo URLs. Implements `IdentityInterface` to properly invalidate FPC cache when partners are modified.
+        -   `PartnerView.php`: Gets partner data either from URL parameters or registry, and provides methods for accessing partner attributes and generating logo URLs. Implements `IdentityInterface` to properly invalidate FPC cache when the displayed partner is modified.
     -   **Block Data Flow**: Frontend blocks retrieve partner data and prepare it for use in templates, including filtering for active status and generating media URLs.
     -   **Data Sharing**: Properly configured dependencies are injected via constructor rather than using ObjectManager directly.
+    -   **Cache Invalidation**: Both frontend blocks implement `IdentityInterface` and return appropriate cache tags from the Partner model, ensuring that the Full Page Cache is properly invalidated when partners are created, updated, deleted, or when their active status changes.
 
 -   **Templates**:
     -   **Frontend Templates**: 
@@ -451,6 +433,7 @@ For detailed GraphQL API documentation, see `docs/graphql.md` in the module dire
     -   **Command/Query Separation**: Implemented dedicated services for data retrieval (queries) and data modification (commands).
     -   **Service Layer**: Created specialized services for specific business operations to improve separation of concerns.
     -   **Reduced Coupling**: Controllers and GraphQL resolvers now use service classes rather than directly accessing repositories.
+    -   **View Models**: Implemented view models for frontend templates, replacing the registry pattern for data sharing between controllers and blocks. This improves testability and follows Magento best practices.
     -   **Dependency Injection**: Properly configured dependencies in di.xml and consistent use of constructor injection across all classes.
 
 ## 12. Developer Notes
@@ -468,7 +451,44 @@ For detailed GraphQL API documentation, see `docs/graphql.md` in the module dire
 -   The URL key JavaScript component provides debounced validation and generation of slugs from partner names.
 -   HTML content in partner descriptions is handled securely while preserving formatting.
 -   Logo URL generation logic has been centralised in the `PartnerMediaUrlService` to eliminate duplication.
+-   The module implements a comprehensive caching strategy with two levels:
+    -   **In-memory Repository Cache**: The `PartnerRepository` caches loaded entities within a single request and properly invalidates this cache when entities are saved or deleted.
+    -   **Full Page Cache (FPC)**: The `Partner` model and frontend blocks implement `IdentityInterface` to ensure proper FPC invalidation when partners are modified.
 
 - Throughout the codebase, you'll find comprehensive PHPDoc comments, return type hints, and scalar type hints. Access modifiers are standardized, method signatures are improved for better type safety, and there's a custom search results implementation for type compatibility. We've also added proper type casting and more specific exception types for better error handling.
 
+- The module now uses view models instead of the registry pattern for sharing data between controllers and templates. This follows Magento best practices and improves testability by:
+  - Removing global state dependencies (registry)
+  - Making dependencies explicit through constructor injection
+  - Separating data provision logic from rendering logic
+  - Simplifying the controller by removing registry-related code
+
 This documentation provides a comprehensive overview of the `Wholesale_PartnerPortal` module. The module follows a service-oriented architecture with proper separation of concerns, making it maintainable, performant, and extensible.
+
+## 13. Testing the Module
+
+After making changes to the module, you should test it to ensure everything works correctly:
+
+1. **Clear the Magento cache**:
+   ```
+   php bin/magento cache:clean
+   ```
+
+2. **Test the partner view page**:
+   - Navigate to a partner view page (e.g., `wholesale/partners/view/slug/partner-slug`)
+   - Verify that the partner details are displayed correctly
+   - Check that the partner logo is displayed
+   - Verify that all partner information (name, description, website, contact email) is shown correctly
+
+3. **Test the partner list page**:
+   - Navigate to the partner list page (`wholesale/partners/index`)
+   - Verify that all active partners are listed
+   - Check that clicking on a partner takes you to the correct partner view page
+
+4. **Test with different partners**:
+   - Test with partners that have different data (some with logos, some without, etc.)
+   - Test with inactive partners (they should not be accessible)
+
+5. **Test in different browsers**:
+   - Verify that the pages display correctly in different browsers
+   - Check that the responsive design works on different screen sizes

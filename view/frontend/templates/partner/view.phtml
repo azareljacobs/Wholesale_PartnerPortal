@@ -2,21 +2,25 @@
 /**
  * Partner view template
  *
- * @var $block \Wholesale\PartnerPortal\Block\PartnerView
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $viewModel \Wholesale\PartnerPortal\ViewModel\Partner
  */
+
+$viewModel = $block->getData('partner_view_model');
+$slug = $block->getRequest()->getParam('slug');
+$partner = $viewModel->getPartnerBySlug($slug);
 ?>
-<?php if ($block->hasPartner()): ?>
-    <?php $partner = $block->getPartner(); ?>
+<?php if ($partner): ?>
     <div class="wholesale-partner-view" itemscope itemtype="https://schema.org/Organization">
         <div class="partner-header">
             <div class="partner-logo">
-                <?php if ($logoUrl = $block->getLogoUrl()): ?>
+                <?php if ($logoUrl = $viewModel->getLogoUrl($partner)): ?>
                     <img src="<?= $block->escapeUrl($logoUrl) ?>"
                          alt="<?= $block->escapeHtml($partner->getName()) ?>"
                          title="<?= $block->escapeHtml($partner->getName()) ?>"
                          loading="lazy"
                          itemprop="logo" />
-                <?php elseif ($fallbackLogo = $block->getFallbackLogoUrl()): ?>
+                <?php elseif ($fallbackLogo = $viewModel->getFallbackLogoUrl()): ?>
                     <img src="<?= $block->escapeUrl($fallbackLogo) ?>"
                          alt="<?= $block->escapeHtml($partner->getName()) ?>"
                          title="<?= $block->escapeHtml($partner->getName()) ?>"
@@ -34,7 +38,7 @@
                 <div class="partner-description">
                     <h2><?= $block->escapeHtml(__('About')) ?></h2>
                     <div class="description-content" itemprop="description">
-                        <?= $block->escapeHtml($block->getSanitizedDescription(), ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'h3', 'h4']) ?>
+                        <?= $block->escapeHtml($partner->getDescription(), ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'h3', 'h4']) ?>
                     </div>
                 </div>
             <?php endif; ?>

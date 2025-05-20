@@ -2,4 +2,13 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <!-- No custom router plugins needed - using standard URL parameters -->
+    
+    <!-- View Models -->
+    <type name="Wholesale\PartnerPortal\ViewModel\Partner">
+        <arguments>
+            <argument name="partnerRepository" xsi:type="object">Wholesale\PartnerPortal\Api\PartnerRepositoryInterface</argument>
+            <argument name="logger" xsi:type="object">Psr\Log\LoggerInterface</argument>
+            <argument name="mediaUrlService" xsi:type="object">Wholesale\PartnerPortal\Model\Service\PartnerMediaUrlService</argument>
+        </arguments>
+    </type>
 </config>

@@ -8,7 +8,6 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\Controller\Result\RedirectFactory;
-use Magento\Framework\Registry;
 use Wholesale\PartnerPortal\Model\Service\PartnerQueryService;
 
 class View implements HttpGetActionInterface
@@ -34,29 +33,21 @@ class View implements HttpGetActionInterface
     private $queryService;
 
     /**
-     * @var Registry
-     */
-    private $coreRegistry;
-
-    /**
      * @param PageFactory $resultPageFactory
      * @param RedirectFactory $resultRedirectFactory
      * @param RequestInterface $request
      * @param PartnerQueryService $queryService
-     * @param Registry $coreRegistry
      */
     public function __construct(
         PageFactory $resultPageFactory,
         RedirectFactory $resultRedirectFactory,
         RequestInterface $request,
-        PartnerQueryService $queryService,
-        Registry $coreRegistry
+        PartnerQueryService $queryService
     ) {
         $this->resultPageFactory = $resultPageFactory;
         $this->resultRedirectFactory = $resultRedirectFactory;
         $this->request = $request;
         $this->queryService = $queryService;
-        $this->coreRegistry = $coreRegistry;
     }
 
     /**
@@ -78,9 +69,6 @@ class View implements HttpGetActionInterface
         try {
             // Get partner by slug and automatically validate it's active
             $partner = $this->queryService->getBySlug($slug, true);
-            
-            // Register partner for blocks to use
-            $this->coreRegistry->register('current_partner', $partner);
             
             // Create and configure result page
             $resultPage = $this->resultPageFactory->create();
