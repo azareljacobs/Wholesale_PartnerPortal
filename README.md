@@ -13,7 +13,7 @@
 
 ## 2. Registration
 
-The module is registered using the standard Magento 2 registration mechanism in `registration.php`:
+The module is registered using the standard Magento 2 registration mechanism in [`registration.php`](registration.php:0):
 
 ```php
 \Magento\Framework\Component\ComponentRegistrar::register(
@@ -102,7 +102,7 @@ This interface provides methods for managing `Partner` entities.
 -   `deleteById($partnerId)`: Deletes a partner by its ID.
 -   `getList(SearchCriteriaInterface $searchCriteria)`: Retrieves a list of partners based on search criteria, returning `PartnerSearchResultsInterface`.
 
-The repository offers features like optional filtering for active/inactive partners and repository-level caching with proper invalidation. The repository implements in-memory caching of loaded entities with cache invalidation on save and delete operations to prevent stale data. It also provides dedicated methods such as `getActiveById()`, `getActiveBySlug()`, and `getActiveList()` to keep business logic clean and behavior consistent.
+The repository offers features like optional filtering for active/inactive partners and repository-level caching with proper invalidation. The repository implements in-memory caching of loaded entities with cache invalidation on save and delete operations to prevent stale data. It also provides dedicated methods such as `getActiveById()`, `getActiveBySlug()`, and `getActiveList()` to keep business logic clean and behaviour consistent.
 
 ### GraphQL Schema
 
@@ -240,13 +240,13 @@ The module has distinct functionalities for both the frontend and adminhtml area
 
 -   **Adminhtml**: Provides an interface for managing partners (CRUD operations, viewing listings, managing settings). This is evident from `Adminhtml` subdirectories in `Block`, `Controller`, `etc/adminhtml`, and `view/adminhtml`, as well as UI component configurations related to admin grids and forms.
 
-    - UI component configurations now use standardized URL generation in JavaScript. Validation URLs have been updated (e.g., `url-key.js` now points to `wholesale_partner/partner/validate`), and `partner_form.xml` has beefed-up validation rules, like a 64-character limit and `validate-no-html-tags` for slugs. The help text is also clearer.
-    - The JavaScript components for URL keys have better client-side validation, a debounce function to avoid too many AJAX calls, real-time uniqueness checks, and instant feedback on whether a key is valid. It still auto-generates slugs from partner names.
-    - Deleting images is smoother now: there's a `DeleteImage` controller for AJAX calls, files are deleted from the server straight away, JavaScript gives immediate visual feedback, and the database stays in sync with the file system.
+    - UI component configurations use standardised URL generation in JavaScript. Validation URLs are updated (e.g., [`url-key.js`](view/adminhtml/web/js/form/element/url-key.js:0) points to `wholesale_partner/partner/validate`), and [`partner_form.xml`](view/adminhtml/ui_component/partner_form.xml:0) has validation rules, like a 64-character limit and `validate-no-html-tags` for slugs. The help text is clear.
+    - The JavaScript components for URL keys have client-side validation, a debounce function to avoid too many AJAX calls, real-time uniqueness checks, and instant feedback on whether a key is valid. It auto-generates slugs from partner names.
+    - Deleting images is smooth: there's a `DeleteImage` controller for AJAX calls, files are deleted from the server straight away, JavaScript gives immediate visual feedback, and the database stays in sync with the file system.
 
 -   **Frontend**: Displays partner information to website visitors. This is implemented through `frontend` subdirectories in `etc/frontend` and `view/frontend`, and the `Controller/Partners` directory.
-    - Block classes now consistently use `private` for properties, have more detailed PHPDoc comments, and use the `PartnerMediaUrlService` for logo URLs. We've also made sure they use dependency injection instead of calling ObjectManager directly.
-    - The frontend templates now include structured data (schema.org ItemList and Organization types) for SEO. Partner logos use lazy loading (`loading="lazy"`), there are pagination controls for the list, fallback images if a logo is missing, and descriptions handle HTML formatting better.
+    - Block classes consistently use `private` for properties, have detailed PHPDoc comments, and use the [`PartnerMediaUrlService`](Model/Service/PartnerMediaUrlService.php:0) for logo URLs. They use dependency injection instead of calling ObjectManager directly.
+    - The frontend templates include structured data (schema.org ItemList and Organization types) for SEO. Partner logos use lazy loading (`loading="lazy"`), there are pagination controls for the list, fallback images if a logo is missing, and descriptions handle HTML formatting.
 
 ## 10. Usage Instructions
 
@@ -283,12 +283,12 @@ Partners are managed through the Magento Admin panel.
         -   `Delete`: Deletes the current partner (if editing an existing one).
         -   `Save`: Saves the partner data and typically redirects back to the grid.
         -   `Save and Continue Edit`: Saves the partner data and reloads the edit form.
-    -   **Admin Partner View Page**: When viewing a partner's details in the admin panel, a link labeled "Open Partner Page in New Window" is present. This link allows administrators to open the corresponding frontend partner page in a new browser tab.
+    -   **Admin Partner View Page**: When viewing a partner's details in the admin panel, a link labelled "Open Partner Page in New Window" is present. This link allows administrators to open the corresponding frontend partner page in a new browser tab.
 
 -   **Custom URL Key Component**:
     -   The form includes a custom JavaScript component (`Wholesale_PartnerPortal/js/form/element/url-key.js`) for the URL Key field.
     -   This component automatically generates a URL key (slug) based on the partner name when the field is left empty.
-    -   It sanitizes the input by converting spaces to hyphens, removing special characters, and ensuring the format is valid for use in URLs.
+    -   It sanitises the input by converting spaces to hyphens, removing special characters, and ensuring the format is valid for use in URLs.
     -   Validation ensures the slug is unique across partners to prevent URL conflicts.
     -   Enhanced with real-time AJAX validation to check for duplicate URL keys.
     -   Length restriction (64 characters) prevents potential database issues.
@@ -403,7 +403,7 @@ The module provides GraphQL endpoints for accessing partner data programmaticall
     -   **Frontend Controllers**: Handle frontend display including the partner list (`Partners/Index.php`) and partner detail view (`Partners/View.php`).
     -   **Security**: Frontend controllers implement checks to ensure only active partners are displayed to visitors.
 
-    - Controllers now make use of the `PartnerVisibilityService` for consistent visibility rules, the `PartnerDataSanitizerService` for cleaning up data, and the `PartnerLogoService` for handling logo uploads. Error handling is more consistent, we've cut down on duplicated visibility checks, and input sanitization now happens in dedicated services.
+    - Controllers make use of the [`PartnerVisibilityService`](Model/Service/PartnerVisibilityService.php:0) for consistent visibility rules, the [`PartnerDataSanitizerService`](Model/Service/PartnerDataSanitizerService.php:0) for cleaning up data, and the [`PartnerLogoService`](Model/Service/PartnerLogoService.php:0) for handling logo uploads. Error handling is consistent, duplicated visibility checks are minimised, and input sanitisation happens in dedicated services.
 
 -   **Blocks**:
     -   **Admin Blocks**: Prepare data and UI for admin forms and grids.
@@ -431,9 +431,9 @@ The module provides GraphQL endpoints for accessing partner data programmaticall
 
 -   **Architecture**:
     -   **Command/Query Separation**: Implemented dedicated services for data retrieval (queries) and data modification (commands).
-    -   **Service Layer**: Created specialized services for specific business operations to improve separation of concerns.
-    -   **Reduced Coupling**: Controllers and GraphQL resolvers now use service classes rather than directly accessing repositories.
-    -   **View Models**: Implemented view models for frontend templates, replacing the registry pattern for data sharing between controllers and blocks. This improves testability and follows Magento best practices.
+    -   **Service Layer**: Created specialised services for specific business operations to improve separation of concerns.
+    -   **Reduced Coupling**: Controllers and GraphQL resolvers use service classes rather than directly accessing repositories.
+    -   **View Models**: View models are implemented for frontend templates, replacing the registry pattern for data sharing between controllers and blocks. This improves testability and follows Magento best practices.
     -   **Dependency Injection**: Properly configured dependencies in di.xml and consistent use of constructor injection across all classes.
 
 ## 12. Developer Notes
@@ -450,20 +450,20 @@ The module provides GraphQL endpoints for accessing partner data programmaticall
 -   For security reasons, active status checks (`is_active = true`) are centralised in the repository and visibility service, ensuring consistent rules across all interfaces.
 -   The URL key JavaScript component provides debounced validation and generation of slugs from partner names.
 -   HTML content in partner descriptions is handled securely while preserving formatting.
--   Logo URL generation logic has been centralised in the `PartnerMediaUrlService` to eliminate duplication.
+-   Logo URL generation logic is centralised in the [`PartnerMediaUrlService`](Model/Service/PartnerMediaUrlService.php:0) to eliminate duplication.
 -   The module implements a comprehensive caching strategy with two levels:
     -   **In-memory Repository Cache**: The `PartnerRepository` caches loaded entities within a single request and properly invalidates this cache when entities are saved or deleted.
     -   **Full Page Cache (FPC)**: The `Partner` model and frontend blocks implement `IdentityInterface` to ensure proper FPC invalidation when partners are modified.
 
-- Throughout the codebase, you'll find comprehensive PHPDoc comments, return type hints, and scalar type hints. Access modifiers are standardized, method signatures are improved for better type safety, and there's a custom search results implementation for type compatibility. We've also added proper type casting and more specific exception types for better error handling.
+- Throughout the codebase, are comprehensive PHPDoc comments, return type hints, and scalar type hints. Access modifiers are standardised, method signatures provide better type safety, and there's a custom search results implementation for type compatibility. Proper type casting and more specific exception types are added for better error handling.
 
-- The module now uses view models instead of the registry pattern for sharing data between controllers and templates. This follows Magento best practices and improves testability by:
+- The module uses view models instead of the registry pattern for sharing data between controllers and templates. This follows Magento best practices and improves testability by:
   - Removing global state dependencies (registry)
   - Making dependencies explicit through constructor injection
   - Separating data provision logic from rendering logic
   - Simplifying the controller by removing registry-related code
 
-This documentation provides a comprehensive overview of the `Wholesale_PartnerPortal` module. The module follows a service-oriented architecture with proper separation of concerns, making it maintainable, performant, and extensible.
+This documentation provides a comprehensive overview of the `Wholesale_PartnerPortal` module. The module follows a service-orientated architecture with proper separation of concerns, making it maintainable, performant, and extensible.
 
 ## 13. Testing the Module
 
