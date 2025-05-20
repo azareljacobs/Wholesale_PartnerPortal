@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Extension attributes configuration
+ *
+ * @category  Wholesale
+ * @package   Wholesale_PartnerPortal
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+    <extension_attributes for="Wholesale\PartnerPortal\Api\Data\PartnerInterface">
+        <!-- Add extension attributes here when needed, for example: -->
+        <!-- <attribute code="custom_attribute" type="string" /> -->
+    </extension_attributes>
+</config>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Admin menu configuration
+ *
+ * @category  Wholesale
+ * @package   Wholesale_PartnerPortal
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Wholesale_PartnerPortal::partner"
+             title="Partners"
+             module="Wholesale_PartnerPortal"
+             sortOrder="50"
+             parent="Magento_Backend::stores"
+             resource="Wholesale_PartnerPortal::partner"/>
+        <add id="Wholesale_PartnerPortal::partner_manage"
+             title="Manage Partners"
+             module="Wholesale_PartnerPortal"
+             sortOrder="10"
+             parent="Wholesale_PartnerPortal::partner"
+             action="wholesale_partner/partner/index"
+             resource="Wholesale_PartnerPortal::partner"/>
+    </menu>
+</config>

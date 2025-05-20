@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Partner view UI component - Buttons only
+ *
+ * @category  Wholesale
+ * @package   Wholesale_PartnerPortal
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">partner_view.partner_view_data_source</item>
+            <item name="deps" xsi:type="string">partner_view.partner_view_data_source</item>
+            <item name="component" xsi:type="string">Magento_Ui/js/form/form</item>
+        </item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">partner_view</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="string">Wholesale\PartnerPortal\Block\Adminhtml\Partner\View\BackButton</item>
+            <item name="edit" xsi:type="string">Wholesale\PartnerPortal\Block\Adminhtml\Partner\View\EditButton</item>
+        </item>
+    </argument>
+    <dataSource name="partner_view_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Wholesale\PartnerPortal\Block\Adminhtml\Partner\View\DataProvider</argument>
+            <argument name="name" xsi:type="string">partner_view_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">partner_id</argument>
+            <argument name="requestFieldName" xsi:type="string">partner_id</argument>
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="submit_url" xsi:type="url" path="wholesale_partner/partner/view"/>
+                </item>
+            </argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+    </dataSource>
+</form>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Database schema for Partner entity
+ *
+ * @category  Wholesale
+ * @package   Wholesale_PartnerPortal
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="wholesale_partner" resource="default" engine="innodb" comment="Wholesale Partner Table">
+        <column xsi:type="int" name="partner_id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Partner ID"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Partner Name"/>
+        <column xsi:type="varchar" name="slug" nullable="false" length="255" comment="Partner URL Key"/>
+        <column xsi:type="varchar" name="logo" nullable="true" length="255" comment="Partner Logo Image Path"/>
+        <column xsi:type="text" name="description" nullable="true" comment="Partner Description"/>
+        <column xsi:type="varchar" name="website" nullable="true" length="255" comment="Partner Website URL"/>
+        <column xsi:type="varchar" name="contact_email" nullable="true" length="255" comment="Partner Contact Email"/>
+        <column xsi:type="boolean" name="is_active" nullable="false" default="1" comment="Partner Is Active"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="partner_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="WHOLESALE_PARTNER_SLUG">
+            <column name="slug"/>
+        </constraint>
+    </table>
+</schema>

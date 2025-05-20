@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Dependency injection configuration
+ *
+ * @category  Wholesale
+ * @package   Wholesale_PartnerPortal
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Interface to Model bindings -->
+    <preference for="Wholesale\PartnerPortal\Api\Data\PartnerInterface"
+                type="Wholesale\PartnerPortal\Model\Partner"/>
+    <preference for="Wholesale\PartnerPortal\Api\PartnerRepositoryInterface"
+                type="Wholesale\PartnerPortal\Model\PartnerRepository"/>
+    <preference for="Wholesale\PartnerPortal\Api\Data\PartnerSearchResultsInterface"
+                type="Wholesale\PartnerPortal\Model\PartnerSearchResults"/>
+
+    <!-- Virtual types for collection processors -->
+    <virtualType name="Wholesale\PartnerPortal\Model\Api\SearchCriteria\PartnerCollectionProcessor"
+                 type="Magento\Framework\Api\SearchCriteria\CollectionProcessor">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="filters" xsi:type="object">Magento\Framework\Api\SearchCriteria\CollectionProcessor\FilterProcessor</item>
+                <item name="sorting" xsi:type="object">Magento\Framework\Api\SearchCriteria\CollectionProcessor\SortingProcessor</item>
+                <item name="pagination" xsi:type="object">Magento\Framework\Api\SearchCriteria\CollectionProcessor\PaginationProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Repository arguments -->
+    <type name="Wholesale\PartnerPortal\Model\PartnerRepository">
+        <arguments>
+            <argument name="collectionProcessor" xsi:type="object">Wholesale\PartnerPortal\Model\Api\SearchCriteria\PartnerCollectionProcessor</argument>
+        </arguments>
+    </type>
+
+    <!-- Image Uploader Configuration -->
+    <type name="Wholesale\PartnerPortal\Model\ImageUploader">
+        <arguments>
+            <argument name="baseTmpPath" xsi:type="string">wholesale/partner/tmp</argument>
+            <argument name="basePath" xsi:type="string">wholesale/partner</argument>
+            <argument name="allowedExtensions" xsi:type="array">
+                <item name="jpg" xsi:type="string">jpg</item>
+                <item name="jpeg" xsi:type="string">jpeg</item>
+                <item name="gif" xsi:type="string">gif</item>
+                <item name="png" xsi:type="string">png</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- File Upload Configuration -->
+    <virtualType name="WholesalePartnerLogoUploader" type="Wholesale\PartnerPortal\Model\ImageUploader">
+        <arguments>
+            <argument name="baseTmpPath" xsi:type="string">wholesale/partner/tmp</argument>
+            <argument name="basePath" xsi:type="string">wholesale/partner</argument>
+            <argument name="allowedExtensions" xsi:type="array">
+                <item name="jpg" xsi:type="string">jpg</item>
+                <item name="jpeg" xsi:type="string">jpeg</item>
+                <item name="gif" xsi:type="string">gif</item>
+                <item name="png" xsi:type="string">png</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Wholesale\PartnerPortal\Controller\Adminhtml\Partner\Upload">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">WholesalePartnerLogoUploader</argument>
+        </arguments>
+    </type>
+
+    <!-- UI Component Data Provider -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="partner_listing_data_source" xsi:type="string">Wholesale\PartnerPortal\Model\ResourceModel\Partner\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    
+    <virtualType name="Wholesale\PartnerPortal\Model\ResourceModel\Partner\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">wholesale_partner</argument>
+            <argument name="resourceModel" xsi:type="string">Wholesale\PartnerPortal\Model\ResourceModel\Partner</argument>
+        </arguments>
+    </virtualType>
+    
+    <!-- Partner Form DataProvider Configuration -->
+    <type name="Wholesale\PartnerPortal\Model\Partner\DataProvider">
+        <arguments>
+            <argument name="name" xsi:type="string">partner_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">partner_id</argument>
+            <argument name="requestFieldName" xsi:type="string">partner_id</argument>
+        </arguments>
+    </type>
+    
+    <!-- Command/Query Service Configuration -->
+    <type name="Wholesale\PartnerPortal\Model\Service\PartnerCommandService">
+        <arguments>
+            <argument name="partnerRepository" xsi:type="object">Wholesale\PartnerPortal\Api\PartnerRepositoryInterface</argument>
+            <argument name="partnerFactory" xsi:type="object">Wholesale\PartnerPortal\Api\Data\PartnerInterfaceFactory</argument>
+            <argument name="dataSanitizerService" xsi:type="object">Wholesale\PartnerPortal\Model\Service\PartnerDataSanitizerService</argument>
+            <argument name="logoService" xsi:type="object">Wholesale\PartnerPortal\Model\Service\PartnerLogoService</argument>
+            <argument name="logger" xsi:type="object">Psr\Log\LoggerInterface</argument>
+        </arguments>
+    </type>
+    
+    <type name="Wholesale\PartnerPortal\Model\Service\PartnerQueryService">
+        <arguments>
+            <argument name="partnerRepository" xsi:type="object">Wholesale\PartnerPortal\Api\PartnerRepositoryInterface</argument>
+            <argument name="visibilityService" xsi:type="object">Wholesale\PartnerPortal\Model\Service\PartnerVisibilityService</argument>
+            <argument name="searchCriteriaBuilder" xsi:type="object">Magento\Framework\Api\SearchCriteriaBuilder</argument>
+            <argument name="sortOrderBuilder" xsi:type="object">Magento\Framework\Api\SortOrderBuilder</argument>
+            <argument name="logger" xsi:type="object">Psr\Log\LoggerInterface</argument>
+        </arguments>
+    </type>
+    
+    <!-- GraphQL Resolver Configurations -->
+    <type name="Wholesale\PartnerPortal\Model\Resolver\Partner">
+        <arguments>
+            <argument name="partnerRepository" xsi:type="object">Wholesale\PartnerPortal\Api\PartnerRepositoryInterface</argument>
+            <argument name="queryService" xsi:type="object">Wholesale\PartnerPortal\Model\Service\PartnerQueryService</argument>
+        </arguments>
+    </type>
+    
+    <type name="Wholesale\PartnerPortal\Model\Resolver\Partners">
+        <arguments>
+            <argument name="partnerRepository" xsi:type="object">Wholesale\PartnerPortal\Api\PartnerRepositoryInterface</argument>
+            <argument name="queryService" xsi:type="object">Wholesale\PartnerPortal\Model\Service\PartnerQueryService</argument>
+            <argument name="searchCriteriaBuilder" xsi:type="object">Magento\Framework\Api\SearchCriteriaBuilder</argument>
+            <argument name="filterBuilder" xsi:type="object">Magento\Framework\Api\FilterBuilder</argument>
+            <argument name="filterGroupBuilder" xsi:type="object">Magento\Framework\Api\Search\FilterGroupBuilder</argument>
+            <argument name="sortOrderBuilder" xsi:type="object">Magento\Framework\Api\SortOrderBuilder</argument>
+        </arguments>
+    </type>
+
+    <!-- Configure Media URL Service -->
+    <type name="Wholesale\PartnerPortal\Model\Service\PartnerMediaUrlService">
+        <arguments>
+            <argument name="storeManager" xsi:type="object">Magento\Store\Model\StoreManagerInterface</argument>
+            <argument name="logger" xsi:type="object">Psr\Log\LoggerInterface</argument>
+        </arguments>
+    </type>
+
+    <!-- Configure Block Classes to use Service Classes -->
+    <type name="Wholesale\PartnerPortal\Block\PartnerList">
+        <arguments>
+            <argument name="mediaUrlService" xsi:type="object">Wholesale\PartnerPortal\Model\Service\PartnerMediaUrlService</argument>
+        </arguments>
+    </type>
+    
+    <type name="Wholesale\PartnerPortal\Block\PartnerView">
+        <arguments>
+            <argument name="mediaUrlService" xsi:type="object">Wholesale\PartnerPortal\Model\Service\PartnerMediaUrlService</argument>
+        </arguments>
+    </type>
+    
+    <type name="Wholesale\PartnerPortal\Block\Adminhtml\Partner\View">
+        <arguments>
+            <argument name="mediaUrlService" xsi:type="object">Wholesale\PartnerPortal\Model\Service\PartnerMediaUrlService</argument>
+        </arguments>
+    </type>
+</config>

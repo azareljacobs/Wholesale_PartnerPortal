@@ -1,0 +1,55 @@
+<?php
+/**
+ * Partner list template
+ *
+ * @var $block \Wholesale\PartnerPortal\Block\PartnerList
+ */
+?>
+<div class="wholesale-partner-list" itemscope itemtype="https://schema.org/ItemList">
+    <h1 itemprop="name"><?= $block->escapeHtml(__('Our Partners')) ?></h1>
+    
+    <?php $partners = $block->getPartners(); ?>
+    
+    <?php if ($partners && count($partners)): ?>
+        <div class="partner-grid">
+            <?php $itemPosition = 1; ?>
+            <?php foreach ($partners as $partner): ?>
+                <div class="partner-card" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <meta itemprop="position" content="<?= $itemPosition++ ?>" />
+                    <a href="<?= $block->escapeUrl($block->getPartnerUrl($partner)) ?>" class="partner-link" itemprop="url">
+                        <div class="partner-logo">
+                            <?php if ($partner->getLogo()): ?>
+                                <img src="<?= $block->escapeUrl($block->getLogoUrl($partner)) ?>"
+                                     alt="<?= $block->escapeHtml($partner->getName()) ?>"
+                                     title="<?= $block->escapeHtml($partner->getName()) ?>"
+                                     loading="lazy"
+                                     itemprop="image" />
+                            <?php else: ?>
+                                <?php if ($fallbackLogo = $block->getFallbackLogoUrl()): ?>
+                                    <img src="<?= $block->escapeUrl($fallbackLogo) ?>"
+                                         alt="<?= $block->escapeHtml($partner->getName()) ?>"
+                                         title="<?= $block->escapeHtml($partner->getName()) ?>"
+                                         loading="lazy"
+                                         itemprop="image" />
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="partner-name">
+                            <h3 itemprop="name"><?= $block->escapeHtml($partner->getName()) ?></h3>
+                        </div>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <div class="message info empty">
+            <div><?= $block->escapeHtml(__('No partners found.')) ?></div>
+        </div>
+    <?php endif; ?>
+    
+    <?php if ($block->getPagerHtml()): ?>
+        <div class="partners-toolbar toolbar bottom">
+            <?= $block->getPagerHtml() ?>
+        </div>
+    <?php endif; ?>
+</div>

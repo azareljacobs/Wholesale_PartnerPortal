@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Partner admin view layout
+ *
+ * @category  Wholesale
+ * @package   Wholesale_PartnerPortal
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="styles"/>
+    <head>
+        <css src="Wholesale_PartnerPortal::css/partner_view.css"/>
+    </head>
+    <body>
+        <referenceBlock name="page.title">
+            <action method="setTitleClass">
+                <argument name="class" xsi:type="string">complex</argument>
+            </action>
+        </referenceBlock>
+        
+        <!-- This is for the buttons only -->
+        <referenceContainer name="content">
+            <container name="admin.partner.buttons.container" htmlTag="div" htmlClass="hidden">
+                <uiComponent name="partner_view"/>
+            </container>
+            <!-- This is for the actual content display -->
+            <block class="Wholesale\PartnerPortal\Block\Adminhtml\Partner\View" name="wholesale_partner_view" template="Wholesale_PartnerPortal::partner/admin_view.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,66 @@
+<?php
+/**
+ * Partner admin view template
+ *
+ * @var $block \Wholesale\PartnerPortal\Block\Adminhtml\Partner\View
+ */
+?>
+<?php if ($block->hasPartner()): ?>
+    <?php $partner = $block->getPartner(); ?>
+    <div class="wholesale-partner-view">
+        <div class="partner-header">
+            <div class="partner-logo">
+                <?php if ($logoUrl = $block->getLogoUrl()): ?>
+                    <img src="<?= $block->escapeUrl($logoUrl) ?>" 
+                         alt="<?= $block->escapeHtml($partner->getName()) ?>" 
+                         title="<?= $block->escapeHtml($partner->getName()) ?>" />
+                <?php else: ?>
+                    <div class="no-logo"><?= $block->escapeHtml(__('No Logo Available')) ?></div>
+                <?php endif; ?>
+            </div>
+            <div class="partner-title">
+                <h1><?= $block->escapeHtml($partner->getName()) ?></h1>
+            </div>
+        </div>
+        
+        <div class="partner-details">
+            <?php if ($partner->getDescription()): ?>
+                <div class="partner-description">
+                    <h2><?= $block->escapeHtml(__('About')) ?></h2>
+                    <div class="description-content">
+                        <?= $block->escapeHtml($partner->getDescription()) ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
+            <?php if ($partner->getWebsite()): ?>
+                <div class="partner-website">
+                    <h2><?= $block->escapeHtml(__('Website')) ?></h2>
+                    <a href="<?= $block->escapeUrl($partner->getWebsite()) ?>" target="_blank" rel="noopener">
+                        <?= $block->escapeHtml($partner->getWebsite()) ?>
+                    </a>
+                </div>
+            <?php endif; ?>
+            
+            <?php if ($partner->getContactEmail()): ?>
+                <div class="partner-contact">
+                    <h2><?= $block->escapeHtml(__('Contact')) ?></h2>
+                    <a href="mailto:<?= $block->escapeHtmlAttr($partner->getContactEmail()) ?>">
+                        <?= $block->escapeHtml($partner->getContactEmail()) ?>
+                    </a>
+                </div>
+            <?php endif; ?>
+            
+            <div class="partner-status">
+                <h2><?= $block->escapeHtml(__('Status')) ?></h2>
+                <span class="status-value <?= $partner->getIsActive() ? 'active' : 'inactive' ?>">
+                    <?= $block->escapeHtml($partner->getIsActive() ? __('Active') : __('Inactive')) ?>
+                </span>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="message info empty">
+        <div><?= $block->escapeHtml(__('Partner not found.')) ?></div>
+    </div>
+<?php endif; ?>

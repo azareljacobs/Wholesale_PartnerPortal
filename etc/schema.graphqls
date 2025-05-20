@@ -1,0 +1,43 @@
+type Query {
+    partners(
+        filter: PartnerFilterInput @doc(description: "Filter to apply to the partners list")
+        pageSize: Int = 20 @doc(description: "How many items to return at once. Default value is 20.")
+        currentPage: Int = 1 @doc(description: "Current page number. Default value is 1.")
+        sort: PartnerSortInput @doc(description: "Sort criteria for the partners list")
+    ): Partners @resolver(class: "Wholesale\\PartnerPortal\\Model\\Resolver\\Partners") @doc(description: "Return a list of partners")
+    
+    partner(
+        id: Int @doc(description: "Partner ID"),
+        slug: String @doc(description: "Partner URL key")
+    ): Partner @resolver(class: "Wholesale\\PartnerPortal\\Model\\Resolver\\Partner") @doc(description: "Return a single partner by ID or slug")
+}
+
+type Partner @doc(description: "Partner details") {
+    partner_id: Int @doc(description: "Partner ID")
+    name: String @doc(description: "Partner name")
+    slug: String @doc(description: "Partner URL key / slug")
+    logo: String @doc(description: "Partner logo image path")
+    description: String @doc(description: "Partner description")
+    website: String @doc(description: "Partner website URL")
+    contact_email: String @doc(description: "Partner contact email")
+    is_active: Boolean @doc(description: "Whether the partner is active")
+}
+
+type Partners @doc(description: "Partner list") {
+    items: [Partner] @doc(description: "List of partners")
+    total_count: Int @doc(description: "Total count of partners")
+    page_info: SearchResultPageInfo @doc(description: "Pagination information")
+}
+
+input PartnerFilterInput {
+    name: FilterTypeInput @doc(description: "Filter by partner name")
+    slug: FilterTypeInput @doc(description: "Filter by partner slug/URL key")
+    website: FilterTypeInput @doc(description: "Filter by partner website URL")
+    is_active: FilterTypeInput @doc(description: "Filter by partner active status")
+    or: PartnerFilterInput @doc(description: "OR condition")
+}
+
+input PartnerSortInput {
+    name: SortEnum @doc(description: "Sort by partner name")
+    partner_id: SortEnum @doc(description: "Sort by partner ID")
+}

@@ -1,0 +1,78 @@
+<?php
+/**
+ * Partner view template
+ *
+ * @var $block \Wholesale\PartnerPortal\Block\PartnerView
+ */
+?>
+<?php if ($block->hasPartner()): ?>
+    <?php $partner = $block->getPartner(); ?>
+    <div class="wholesale-partner-view" itemscope itemtype="https://schema.org/Organization">
+        <div class="partner-header">
+            <div class="partner-logo">
+                <?php if ($logoUrl = $block->getLogoUrl()): ?>
+                    <img src="<?= $block->escapeUrl($logoUrl) ?>"
+                         alt="<?= $block->escapeHtml($partner->getName()) ?>"
+                         title="<?= $block->escapeHtml($partner->getName()) ?>"
+                         loading="lazy"
+                         itemprop="logo" />
+                <?php elseif ($fallbackLogo = $block->getFallbackLogoUrl()): ?>
+                    <img src="<?= $block->escapeUrl($fallbackLogo) ?>"
+                         alt="<?= $block->escapeHtml($partner->getName()) ?>"
+                         title="<?= $block->escapeHtml($partner->getName()) ?>"
+                         loading="lazy"
+                         itemprop="logo" />
+                <?php endif; ?>
+            </div>
+            <div class="partner-title">
+                <h1 itemprop="name"><?= $block->escapeHtml($partner->getName()) ?></h1>
+            </div>
+        </div>
+        
+        <div class="partner-details">
+            <?php if ($partner->getDescription()): ?>
+                <div class="partner-description">
+                    <h2><?= $block->escapeHtml(__('About')) ?></h2>
+                    <div class="description-content" itemprop="description">
+                        <?= $block->escapeHtml($block->getSanitizedDescription(), ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'h3', 'h4']) ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
+            <?php if ($partner->getWebsite()): ?>
+                <div class="partner-website">
+                    <h2><?= $block->escapeHtml(__('Website')) ?></h2>
+                    <a href="<?= $block->escapeUrl($partner->getWebsite()) ?>" target="_blank" rel="noopener" itemprop="url">
+                        <?= $block->escapeHtml($partner->getWebsite()) ?>
+                    </a>
+                </div>
+            <?php endif; ?>
+            
+            <?php if ($partner->getContactEmail()): ?>
+                <div class="partner-contact">
+                    <h2><?= $block->escapeHtml(__('Contact')) ?></h2>
+                    <a href="mailto:<?= $block->escapeHtmlAttr($partner->getContactEmail()) ?>" itemprop="email">
+                        <?= $block->escapeHtml($partner->getContactEmail()) ?>
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
+        
+        <div class="partner-actions">
+            <a href="<?= $block->escapeUrl($block->getUrl('wholesale/partners/index')) ?>" class="action back">
+                <span><?= $block->escapeHtml(__('Back to Partners')) ?></span>
+            </a>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="message info empty">
+        <div><?= $block->escapeHtml(__('Partner not found.')) ?></div>
+    </div>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <a href="<?= $block->escapeUrl($block->getUrl('wholesale/partners/index')) ?>" class="action back">
+                <span><?= $block->escapeHtml(__('Back to Partners')) ?></span>
+            </a>
+        </div>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,60 @@
+<div class="admin__field-control" data-ui-id="image-uploader-container">
+    <div class="file-uploader" data-role="drop-zone" css="_loading: isLoading">
+        <div class="file-uploader-area">
+            <input type="file" afterRender="onElementRender" attr="name: inputName, id: fileInputUid, disabled: disabled" />
+            <label attr="for: fileInputUid" class="file-uploader-button action-default" translate="'Upload'"></label>
+            <span class="file-uploader-button-text" translate="'Upload'"></span>
+            <render args="fallbackResetTpl" if="$data.showFallbackReset && $data.isDifferedFromDefault" />
+        </div>
+
+        <render args="tooltipTpl" if="$data.tooltip" />
+
+        <div class="admin__field-note" if="$data.notice">
+            <span html="notice" />
+        </div>
+
+        <!-- Preview & Delete UI for uploaded files -->
+        <div class="file-uploader-preview" if="hasData() && !isMultipleFiles">
+            <each args="data: value, as: '$file'">
+                <div class="file-uploader-preview-image" css="'preview-' + $file.previewType">
+                    <img if="$file.previewType === 'image'"
+                         attr="src: $file.url, alt: $file.name"
+                         class="preview-image" />
+                    
+                    <div class="file-uploader-meta">
+                        <text args="$file.name" />
+                    </div>
+                    
+                    <div class="actions">
+                        <button type="button"
+                                class="action-remove"
+                                data-role="delete-button"
+                                attr="title: $t('Delete image')"
+                                click="$parent.removeFile.bind($parent, $file)">
+                            <span translate="'Delete image'"></span>
+                        </button>
+                        <div class="delete-status" style="display: none;">
+                            <span class="success" style="display: none; color: green;">Deleted</span>
+                            <span class="error" style="display: none; color: red;">Error</span>
+                        </div>
+                    </div>
+
+                    <!-- Hidden delete flag field for form submission -->
+                    <input type="hidden"
+                           attr="
+                               name: $parent.inputName + '[delete]',
+                               value: '0'
+                           " />
+                </div>
+            </each>
+        </div>
+
+        <!-- Fallback for multiple files support -->
+        <div if="isMultipleFiles" class="file-uploader-summary">
+            <label class="file-uploader-placeholder" attr="for: fileInputUid" if="!hasData() || isMultipleFiles">
+                <span translate="'Drag and drop to upload files or click here to browse for files.'"></span>
+            </label>
+        </div>
+    </div>
+    <render args="$data.service.template" if="$data.hasService()" />
+</div>
