@@ -8,7 +8,7 @@
 - **Composer Version**: `1.0.0` (from `composer.json`)
 - **Dependencies**:
     - `Magento_Backend` (from `etc/module.xml`)
-    - `php: ~7.4.0||~8.1.0` (from `composer.json`)
+    - `php: >=8.0` (from `composer.json`)
     - `magento/framework: 103.0.*` (from `composer.json`)
 
 ## 2. Registration
