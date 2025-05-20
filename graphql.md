@@ -313,5 +313,3 @@ You can test the GraphQL API using the GraphQL playground in your Magento instal
 ```
 https://your-magento-url/graphql
 ```
-
-A simple test script is available in `docs/graphql_test.php` that demonstrates how to query the API programmatically.

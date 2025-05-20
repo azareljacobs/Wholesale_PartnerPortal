@@ -66,7 +66,7 @@ The `etc/di.xml` file configures various aspects of the module's dependency inje
 -   **Interface Preferences**:
     -   `Wholesale\PartnerPortal\Api\Data\PartnerInterface` maps to `Wholesale\PartnerPortal\Model\Partner`
     -   `Wholesale\PartnerPortal\Api\PartnerRepositoryInterface` maps to `Wholesale\PartnerPortal\Model\PartnerRepository`
-    -   `Wholesale\PartnerPortal\Api\Data\PartnerSearchResultsInterface` maps to `Magento\Framework\Api\SearchResults`
+    -   `Wholesale\PartnerPortal\Api\Data\PartnerSearchResultsInterface` maps to `Wholesale\PartnerPortal\Model\PartnerSearchResults`
 
 -   **Virtual Types**:
     -   `Wholesale\PartnerPortal\Model\Api\SearchCriteria\PartnerCollectionProcessor`: A virtual type for `Magento\Framework\Api\SearchCriteria\CollectionProcessor`, configured with filter, sorting, and pagination processors.
@@ -283,6 +283,7 @@ Partners are managed through the Magento Admin panel.
         -   `Delete`: Deletes the current partner (if editing an existing one).
         -   `Save`: Saves the partner data and typically redirects back to the grid.
         -   `Save and Continue Edit`: Saves the partner data and reloads the edit form.
+    -   **Admin Partner View Page**: When viewing a partner's details in the admin panel, a link labeled "Open Partner Page in New Window" is present. This link allows administrators to open the corresponding frontend partner page in a new browser tab.
 
 -   **Custom URL Key Component**:
     -   The form includes a custom JavaScript component (`Wholesale_PartnerPortal/js/form/element/url-key.js`) for the URL Key field.
@@ -394,7 +395,6 @@ The module provides GraphQL endpoints for accessing partner data programmaticall
         -   `or`: Combine conditions with OR logic
     -   **Security**: Like the single partner query, this resolver also filters out inactive partners.
 
-For detailed GraphQL API documentation, see `docs/graphql.md` in the module directory.
 
 ## 11. Key Components Summary
 
@@ -412,7 +412,7 @@ For detailed GraphQL API documentation, see `docs/graphql.md` in the module dire
         -   `PartnerView.php`: Gets partner data either from URL parameters or registry, and provides methods for accessing partner attributes and generating logo URLs. Implements `IdentityInterface` to properly invalidate FPC cache when the displayed partner is modified.
     -   **Block Data Flow**: Frontend blocks retrieve partner data and prepare it for use in templates, including filtering for active status and generating media URLs.
     -   **Data Sharing**: Properly configured dependencies are injected via constructor rather than using ObjectManager directly.
-    -   **Cache Invalidation**: Both frontend blocks implement `IdentityInterface` and return appropriate cache tags from the Partner model, ensuring that the Full Page Cache is properly invalidated when partners are created, updated, deleted, or when their active status changes.
+    -   **Cache Invalidation**: Both frontend blocks implement `IdentityInterface` and return appropriate cache tags from the Partner model. The Full Page Cache is invalidated when partners are created, updated, or deleted. Changes to a partner's active status also trigger cache invalidation for their specific partner view page.
 
 -   **Templates**:
     -   **Frontend Templates**: 
