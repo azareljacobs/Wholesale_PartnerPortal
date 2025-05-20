@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Wholesale\PartnerPortal\Block;
 
+use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
@@ -10,9 +11,10 @@ use Magento\Framework\View\Element\Template\Context;
 use Psr\Log\LoggerInterface;
 use Wholesale\PartnerPortal\Api\Data\PartnerInterface;
 use Wholesale\PartnerPortal\Api\PartnerRepositoryInterface;
+use Wholesale\PartnerPortal\Model\Partner;
 use Wholesale\PartnerPortal\Model\Service\PartnerMediaUrlService;
 
-class PartnerView extends Template
+class PartnerView extends Template implements IdentityInterface
 {
     /**
      * @var PartnerRepositoryInterface
@@ -139,5 +141,22 @@ class PartnerView extends Template
         // Return the already sanitized description from the partner model
         // The sanitation happens at save time via PartnerDataSanitizerService
         return $partner->getDescription();
+    }
+    
+    /**
+     * Get identities for cache invalidation
+     *
+     * @return string[]
+     */
+    public function getIdentities()
+    {
+        $identities = [Partner::CACHE_TAG];
+        
+        $partner = $this->getPartner();
+        if ($partner) {
+            $identities = array_merge($identities, $partner->getIdentities());
+        }
+        
+        return $identities;
     }
 }

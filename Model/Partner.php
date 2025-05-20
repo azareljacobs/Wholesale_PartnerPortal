@@ -47,7 +47,13 @@ class Partner extends AbstractExtensibleModel implements IdentityInterface, Part
      */
     public function getIdentities()
     {
-        return [self::CACHE_TAG . '_' . $this->getId()];
+        $identities = [self::CACHE_TAG];
+        
+        if ($this->getId()) {
+            $identities[] = self::CACHE_TAG . '_' . $this->getId();
+        }
+        
+        return $identities;
     }
 
 

@@ -97,6 +97,18 @@ class PartnerRepository implements PartnerRepositoryInterface
     {
         try {
             $this->resource->save($partner);
+            
+            // Invalidate cache entries for this partner
+            $partnerId = $partner->getId();
+            $slug = $partner->getSlug();
+            
+            if ($partnerId && isset($this->partnerCache['id_' . $partnerId])) {
+                unset($this->partnerCache['id_' . $partnerId]);
+            }
+            
+            if ($slug && isset($this->partnerCache['slug_' . $slug])) {
+                unset($this->partnerCache['slug_' . $slug]);
+            }
         } catch (\Exception $exception) {
             throw new CouldNotSaveException(__($exception->getMessage()));
         }
@@ -195,7 +207,20 @@ class PartnerRepository implements PartnerRepositoryInterface
     public function delete(PartnerInterface $partner): bool
     {
         try {
+            // Get partner data before deletion for cache invalidation
+            $partnerId = $partner->getId();
+            $slug = $partner->getSlug();
+            
             $this->resource->delete($partner);
+            
+            // Invalidate cache entries for this partner
+            if ($partnerId && isset($this->partnerCache['id_' . $partnerId])) {
+                unset($this->partnerCache['id_' . $partnerId]);
+            }
+            
+            if ($slug && isset($this->partnerCache['slug_' . $slug])) {
+                unset($this->partnerCache['slug_' . $slug]);
+            }
         } catch (\Exception $exception) {
             throw new CouldNotDeleteException(__($exception->getMessage()));
         }

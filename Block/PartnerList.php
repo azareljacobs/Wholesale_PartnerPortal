@@ -5,15 +5,17 @@ namespace Wholesale\PartnerPortal\Block;
 
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SortOrderBuilder;
+use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Psr\Log\LoggerInterface;
 use Wholesale\PartnerPortal\Api\Data\PartnerInterface;
 use Wholesale\PartnerPortal\Api\PartnerRepositoryInterface;
+use Wholesale\PartnerPortal\Model\Partner;
 use Wholesale\PartnerPortal\Model\ResourceModel\Partner\CollectionFactory;
 use Wholesale\PartnerPortal\Model\Service\PartnerMediaUrlService;
 
-class PartnerList extends Template
+class PartnerList extends Template implements IdentityInterface
 {
     /**
      * Default number of partners per page
@@ -214,5 +216,25 @@ class PartnerList extends Template
     public function getPagerHtml()
     {
         return $this->getChildHtml('pager');
+    }
+    
+    /**
+     * Get identities for cache invalidation
+     *
+     * @return string[]
+     */
+    public function getIdentities()
+    {
+        $identities = [Partner::CACHE_TAG . '_list'];
+        
+        // Add general partner cache tag
+        $identities[] = Partner::CACHE_TAG;
+        
+        // Add individual partner cache tags
+        foreach ($this->getPartners() as $partner) {
+            $identities = array_merge($identities, $partner->getIdentities());
+        }
+        
+        return array_unique($identities);
     }
 }
