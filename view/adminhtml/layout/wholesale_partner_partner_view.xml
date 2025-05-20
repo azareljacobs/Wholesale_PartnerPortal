@@ -25,7 +25,11 @@
                 <uiComponent name="partner_view"/>
             </container>
             <!-- This is for the actual content display -->
-            <block class="Wholesale\PartnerPortal\Block\Adminhtml\Partner\View" name="wholesale_partner_view" template="Wholesale_PartnerPortal::partner/admin_view.phtml"/>
+            <block class="Wholesale\PartnerPortal\Block\Adminhtml\Partner\View" name="wholesale_partner_view" template="Wholesale_PartnerPortal::partner/admin_view.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Wholesale\PartnerPortal\ViewModel\Adminhtml\PartnerView</argument>
+                </arguments>
+            </block>
         </referenceContainer>
     </body>
 </page>

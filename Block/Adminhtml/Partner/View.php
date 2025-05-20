@@ -11,19 +11,14 @@ namespace Wholesale\PartnerPortal\Block\Adminhtml\Partner;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Button;
-use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Psr\Log\LoggerInterface;
 use Wholesale\PartnerPortal\Api\Data\PartnerInterface;
 use Wholesale\PartnerPortal\Model\Service\PartnerMediaUrlService;
+use Wholesale\PartnerPortal\ViewModel\Adminhtml\PartnerView;
 
 class View extends Template
 {
-    /**
-     * @var Registry
-     */
-    private $coreRegistry;
-
     /**
      * @var LoggerInterface
      */
@@ -36,22 +31,20 @@ class View extends Template
 
     /**
      * @param Context $context
-     * @param Registry $coreRegistry
      * @param LoggerInterface $logger
      * @param PartnerMediaUrlService $mediaUrlService
      * @param array $data
      */
     public function __construct(
         Context $context,
-        Registry $coreRegistry,
         LoggerInterface $logger,
         PartnerMediaUrlService $mediaUrlService,
         array $data = []
     ) {
-        $this->coreRegistry = $coreRegistry;
         $this->logger = $logger;
         $this->mediaUrlService = $mediaUrlService;
         parent::__construct($context, $data);
+        // ViewModel is expected to be injected via layout XML
     }
 
     /**
@@ -61,7 +54,23 @@ class View extends Template
      */
     public function getPartner(): ?PartnerInterface
     {
-        return $this->coreRegistry->registry('current_partner');
+        $viewModel = $this->getViewModel();
+        if ($viewModel instanceof PartnerView) {
+            return $viewModel->getPartner();
+        }
+        $this->logger->warning('PartnerView ViewModel not found or not of expected type in Block.');
+        return null;
+    }
+
+    /**
+     * Get the ViewModel instance.
+     *
+     * @return PartnerView|null
+     */
+    private function getViewModel(): ?PartnerView
+    {
+        // The 'view_model' key matches the argument name in the layout XML
+        return $this->getData('view_model');
     }
 
     /**

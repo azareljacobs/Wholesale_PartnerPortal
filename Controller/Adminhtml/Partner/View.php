@@ -12,7 +12,6 @@ namespace Wholesale\PartnerPortal\Controller\Adminhtml\Partner;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
 use Wholesale\PartnerPortal\Api\PartnerRepositoryInterface;
 use Wholesale\PartnerPortal\Model\PartnerFactory;
@@ -35,11 +34,6 @@ class View extends Action
     protected $partnerRepository;
 
     /**
-     * @var Registry
-     */
-    protected $coreRegistry;
-
-    /**
      * @var PartnerFactory
      */
     protected $partnerFactory;
@@ -48,20 +42,17 @@ class View extends Action
      * @param Context $context
      * @param PageFactory $resultPageFactory
      * @param PartnerRepositoryInterface $partnerRepository
-     * @param Registry $coreRegistry
      * @param PartnerFactory $partnerFactory
      */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory,
         PartnerRepositoryInterface $partnerRepository,
-        Registry $coreRegistry,
         PartnerFactory $partnerFactory
     ) {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
         $this->partnerRepository = $partnerRepository;
-        $this->coreRegistry = $coreRegistry;
         $this->partnerFactory = $partnerFactory;
     }
 
@@ -87,9 +78,6 @@ class View extends Action
             $resultRedirect = $this->resultRedirectFactory->create();
             return $resultRedirect->setPath('*/*/');
         }
-
-        // Register the partner model for use in blocks
-        $this->coreRegistry->register('current_partner', $model);
 
         // Create and configure the result page
         $resultPage = $this->resultPageFactory->create();
