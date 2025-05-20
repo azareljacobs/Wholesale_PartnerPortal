@@ -50,38 +50,6 @@ class Partner extends AbstractExtensibleModel implements IdentityInterface, Part
         return [self::CACHE_TAG . '_' . $this->getId()];
     }
 
-    /**
-     * Get dynamic data via magic method
-     *
-     * @param string $method
-     * @param array $args
-     * @return mixed
-     */
-    public function __call($method, $args)
-    {
-        // Convert getFieldName to field_name for data access
-        if (strpos($method, 'get') === 0) {
-            $key = $this->snakeCase(substr($method, 3));
-            return $this->getData($key);
-        }
-        // Convert setFieldName to field_name for data setting
-        if (strpos($method, 'set') === 0) {
-            $key = $this->snakeCase(substr($method, 3));
-            return $this->setData($key, isset($args[0]) ? $args[0] : null);
-        }
-        return parent::__call($method, $args);
-    }
-
-    /**
-     * Convert camelCase to snake_case
-     *
-     * @param string $input
-     * @return string
-     */
-    private function snakeCase($input)
-    {
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
-    }
 
     /**
      * Get ID
