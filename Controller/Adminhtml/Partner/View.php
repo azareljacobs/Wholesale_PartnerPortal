@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * View partner controller for admin
  *
@@ -69,7 +70,7 @@ class View extends Action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\ResultInterface
     {
         $id = $this->getRequest()->getParam('partner_id');
         
@@ -80,7 +81,7 @@ class View extends Action
         }
         
         try {
-            $model = $this->partnerRepository->getById($id);
+            $model = $this->partnerRepository->getById((int)$id);
         } catch (NoSuchEntityException $e) {
             $this->messageManager->addErrorMessage(__('This partner no longer exists.'));
             $resultRedirect = $this->resultRedirectFactory->create();

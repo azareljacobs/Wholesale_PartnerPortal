@@ -55,7 +55,7 @@ class View implements HttpGetActionInterface
      *
      * @return \Magento\Framework\View\Result\Page|\Magento\Framework\Controller\Result\Redirect
      */
-    public function execute()
+    public function execute(): \Magento\Framework\View\Result\Page|\Magento\Framework\Controller\Result\Redirect
     {
         // Get slug from standard URL parameter
         $slug = $this->request->getParam('slug');

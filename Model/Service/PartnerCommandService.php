@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Partner command service
  *
@@ -82,7 +83,7 @@ class PartnerCommandService
         try {
             // Load existing partner or create new one
             if (!empty($sanitizedData[PartnerInterface::PARTNER_ID])) {
-                $partner = $this->partnerRepository->getById($sanitizedData[PartnerInterface::PARTNER_ID]);
+                $partner = $this->partnerRepository->getById((int)$sanitizedData[PartnerInterface::PARTNER_ID]);
             } else {
                 $partner = $this->partnerFactory->create();
             }

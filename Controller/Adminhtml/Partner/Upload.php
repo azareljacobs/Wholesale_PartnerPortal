@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Upload partner logo controller
  *
@@ -43,7 +44,7 @@ class Upload extends Action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\ResultInterface
     {
         $imageId = $this->_request->getParam('param_name', 'logo');
 

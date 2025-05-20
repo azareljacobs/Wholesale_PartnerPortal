@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Edit button block for view page
  *
@@ -17,7 +18,7 @@ class EditButton extends GenericButton implements ButtonProviderInterface
      *
      * @return array
      */
-    public function getButtonData()
+    public function getButtonData(): array
     {
         $partnerId = $this->getPartnerId();
         if (!$partnerId) {
@@ -37,7 +38,7 @@ class EditButton extends GenericButton implements ButtonProviderInterface
      *
      * @return string
      */
-    public function getEditUrl()
+    public function getEditUrl(): string
     {
         return $this->getUrl('*/*/edit', ['partner_id' => $this->getPartnerId()]);
     }

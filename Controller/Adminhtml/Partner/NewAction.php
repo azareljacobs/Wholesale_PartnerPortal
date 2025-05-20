@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * New partner controller
  *
@@ -41,7 +42,7 @@ class NewAction extends Action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\ResultInterface
     {
         $resultForward = $this->resultForwardFactory->create();
         return $resultForward->forward('edit');

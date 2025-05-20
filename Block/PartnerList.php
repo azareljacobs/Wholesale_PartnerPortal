@@ -96,7 +96,7 @@ class PartnerList extends Template implements IdentityInterface
      *
      * @return \Wholesale\PartnerPortal\Model\ResourceModel\Partner\Collection
      */
-    public function getPartnersCollection()
+    public function getPartnersCollection(): \Wholesale\PartnerPortal\Model\ResourceModel\Partner\Collection
     {
         if ($this->partnersCollection === null) {
             $this->partnersCollection = $this->collectionFactory->create();
@@ -120,7 +120,7 @@ class PartnerList extends Template implements IdentityInterface
      *
      * @return array
      */
-    public function getPartners()
+    public function getPartners(): array
     {
         if ($this->partners === null) {
             $this->partners = $this->getPartnersCollection()->getItems();
@@ -135,7 +135,7 @@ class PartnerList extends Template implements IdentityInterface
      * @param \Wholesale\PartnerPortal\Api\Data\PartnerInterface $partner
      * @return string
      */
-    public function getPartnerUrl($partner)
+    public function getPartnerUrl($partner): string
     {
         return $this->getUrl('wholesale/partners/view', ['slug' => $partner->getSlug()]);
     }
@@ -146,7 +146,7 @@ class PartnerList extends Template implements IdentityInterface
      * @param PartnerInterface $partner
      * @return string|null
      */
-    public function getLogoUrl($partner)
+    public function getLogoUrl($partner): ?string
     {
         return $this->mediaUrlService->getLogoUrl($partner);
     }
@@ -156,7 +156,7 @@ class PartnerList extends Template implements IdentityInterface
      *
      * @return string|null
      */
-    public function getFallbackLogoUrl()
+    public function getFallbackLogoUrl(): ?string
     {
         return $this->mediaUrlService->getFallbackLogoUrl();
     }
@@ -166,7 +166,7 @@ class PartnerList extends Template implements IdentityInterface
      *
      * @return int
      */
-    public function getPageSize()
+    public function getPageSize(): int
     {
         return (int)$this->getData('page_size') ?: self::DEFAULT_PARTNERS_PER_PAGE;
     }
@@ -176,7 +176,7 @@ class PartnerList extends Template implements IdentityInterface
      *
      * @return int
      */
-    public function getCurrentPage()
+    public function getCurrentPage(): int
     {
         return $this->getRequest()->getParam('p') ? (int)$this->getRequest()->getParam('p') : 1;
     }
@@ -213,7 +213,7 @@ class PartnerList extends Template implements IdentityInterface
      *
      * @return string
      */
-    public function getPagerHtml()
+    public function getPagerHtml(): string
     {
         return $this->getChildHtml('pager');
     }
@@ -223,7 +223,7 @@ class PartnerList extends Template implements IdentityInterface
      *
      * @return string[]
      */
-    public function getIdentities()
+    public function getIdentities(): array
     {
         $identities = [Partner::CACHE_TAG . '_list'];
         

@@ -69,7 +69,7 @@ class PartnerView extends Template implements IdentityInterface
      *
      * @return PartnerInterface|null
      */
-    public function getPartner()
+    public function getPartner(): ?PartnerInterface
     {
         if ($this->partner === null) {
             $slug = $this->getRequest()->getParam('slug');
@@ -95,7 +95,7 @@ class PartnerView extends Template implements IdentityInterface
      *
      * @return bool
      */
-    public function hasPartner()
+    public function hasPartner(): bool
     {
         return $this->getPartner() !== null;
     }
@@ -105,7 +105,7 @@ class PartnerView extends Template implements IdentityInterface
      *
      * @return string|null
      */
-    public function getLogoUrl()
+    public function getLogoUrl(): ?string
     {
         return $this->mediaUrlService->getLogoUrl($this->getPartner());
     }
@@ -115,7 +115,7 @@ class PartnerView extends Template implements IdentityInterface
      *
      * @return string|null
      */
-    public function getFallbackLogoUrl()
+    public function getFallbackLogoUrl(): ?string
     {
         return $this->mediaUrlService->getFallbackLogoUrl();
     }
@@ -131,7 +131,7 @@ class PartnerView extends Template implements IdentityInterface
      *
      * @return string
      */
-    public function getSanitizedDescription()
+    public function getSanitizedDescription(): string
     {
         $partner = $this->getPartner();
         if (!$partner) {
@@ -148,13 +148,20 @@ class PartnerView extends Template implements IdentityInterface
      *
      * @return string[]
      */
-    public function getIdentities()
+    public function getIdentities(): array
     {
         $identities = [Partner::CACHE_TAG];
         
         $partner = $this->getPartner();
         if ($partner) {
             $identities = array_merge($identities, $partner->getIdentities());
+            
+            // Add a specific cache tag for the partner's slug
+            // This ensures that when a partner is updated (e.g., active status changes),
+            // the cache for this specific partner page is invalidated
+            if ($partner->getSlug()) {
+                $identities[] = Partner::CACHE_TAG . '_slug_' . $partner->getSlug();
+            }
         }
         
         return $identities;

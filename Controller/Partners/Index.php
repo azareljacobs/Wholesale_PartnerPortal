@@ -27,7 +27,7 @@ class Index implements HttpGetActionInterface
      *
      * @return \Magento\Framework\View\Result\Page
      */
-    public function execute()
+    public function execute(): \Magento\Framework\View\Result\Page
     {
         $resultPage = $this->resultPageFactory->create();
         $resultPage->getConfig()->getTitle()->set(__('Partners'));

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Partner GraphQL resolver
  *
@@ -50,7 +51,7 @@ class Partner implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ) {
+    ): array {
         if (empty($args['id']) && empty($args['slug'])) {
             throw new GraphQlInputException(__('You must specify either a partner ID or slug.'));
         }

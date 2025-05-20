@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Validate partner URL key controller
  *
@@ -59,7 +60,7 @@ class Validate extends Action
      *
      * @return \Magento\Framework\Controller\Result\Json
      */
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\Result\Json
     {
         $resultJson = $this->resultJsonFactory->create();
         $response = [

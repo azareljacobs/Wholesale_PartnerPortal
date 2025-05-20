@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Partner logo service
  *
@@ -47,7 +48,7 @@ class PartnerLogoService
      * @param int|null $partnerId
      * @return string|false Returns normalized filename on success, false on failure
      */
-   public function moveLogoToPermanentStorage(string $logoFilename, ?int $partnerId = null)
+   public function moveLogoToPermanentStorage(string $logoFilename, ?int $partnerId = null): string|false
    {
        try {
            $normalizedFilename = $this->imageUploader->moveFileFromTmp($logoFilename);

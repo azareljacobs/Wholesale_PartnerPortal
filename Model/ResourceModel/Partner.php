@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Partner resource model
  *
@@ -54,7 +55,7 @@ class Partner extends AbstractDb
      * @throws AlreadyExistsException
      * @throws LocalizedException
      */
-    protected function _beforeSave(AbstractModel $object)
+    protected function _beforeSave(AbstractModel $object): self
     {
         if ($object->isObjectNew() || $object->dataHasChangedFor('slug')) {
             try {

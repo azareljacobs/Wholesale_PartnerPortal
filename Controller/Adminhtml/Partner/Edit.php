@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Edit partner controller
  *
@@ -69,14 +70,14 @@ class Edit extends Action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\ResultInterface
     {
         $id = $this->getRequest()->getParam('partner_id');
         $model = $this->partnerFactory->create();
 
         if ($id) {
             try {
-                $model = $this->partnerRepository->getById($id);
+                $model = $this->partnerRepository->getById((int)$id);
             } catch (NoSuchEntityException $e) {
                 $this->messageManager->addErrorMessage(__('This partner no longer exists.'));
                 $resultRedirect = $this->resultRedirectFactory->create();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Delete partner controller
  *
@@ -43,7 +44,7 @@ class Delete extends Action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();
         $id = (int)$this->getRequest()->getParam('partner_id');

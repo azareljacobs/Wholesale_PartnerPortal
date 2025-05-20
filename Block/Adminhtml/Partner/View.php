@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Admin partner view block
  *
@@ -58,7 +59,7 @@ class View extends Template
      *
      * @return PartnerInterface|null
      */
-    public function getPartner()
+    public function getPartner(): ?PartnerInterface
     {
         return $this->coreRegistry->registry('current_partner');
     }
@@ -68,7 +69,7 @@ class View extends Template
      *
      * @return bool
      */
-    public function hasPartner()
+    public function hasPartner(): bool
     {
         return $this->getPartner() !== null;
     }
@@ -78,7 +79,7 @@ class View extends Template
      *
      * @return int|null
      */
-    public function getPartnerId()
+    public function getPartnerId(): ?int
     {
         $partner = $this->getPartner();
         return $partner ? $partner->getId() : null;
@@ -89,7 +90,7 @@ class View extends Template
      *
      * @return string|null
      */
-    public function getLogoUrl()
+    public function getLogoUrl(): ?string
     {
         return $this->mediaUrlService->getLogoUrl($this->getPartner());
     }
@@ -99,7 +100,7 @@ class View extends Template
      *
      * @return string|null
      */
-    public function getFallbackLogoUrl()
+    public function getFallbackLogoUrl(): ?string
     {
         return $this->mediaUrlService->getFallbackLogoUrl();
     }
@@ -109,7 +110,7 @@ class View extends Template
      *
      * @return string
      */
-    public function getBackUrl()
+    public function getBackUrl(): string
     {
         return $this->getUrl('*/*/');
     }
@@ -119,7 +120,7 @@ class View extends Template
      *
      * @return string
      */
-    public function getEditUrl()
+    public function getEditUrl(): string
     {
         return $this->getUrl('*/*/edit', ['partner_id' => $this->getPartnerId()]);
     }
@@ -129,8 +130,24 @@ class View extends Template
      *
      * @return array
      */
-    public function getButtonUrlParams()
+    public function getButtonUrlParams(): array
     {
         return ['partner_id' => $this->getPartnerId()];
+    }
+    
+    /**
+     * Get frontend URL for the partner
+     *
+     * @return string|null
+     */
+    public function getFrontendUrl(): ?string
+    {
+        $partner = $this->getPartner();
+        if (!$partner || !$partner->getSlug()) {
+            return null;
+        }
+        
+        // Build the frontend URL using the partner's slug
+        return $this->_storeManager->getStore()->getBaseUrl() . 'wholesale/partners/view/slug/' . $partner->getSlug();
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Partner form data provider
  *
@@ -78,11 +79,13 @@ class DataProvider extends AbstractDataProvider
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
-        if (isset($this->loadedData)) {
+        if ($this->loadedData !== null) {
             return $this->loadedData;
         }
+
+        $this->loadedData = []; // Initialize as empty array
 
         // Filter the collection by partner_id if it's in the request
         $partnerId = $this->getPartnerId();
@@ -147,7 +150,7 @@ class DataProvider extends AbstractDataProvider
      *
      * @return int|null
      */
-    private function getPartnerId()
+    private function getPartnerId(): ?int
     {
         return $this->request ? (int)$this->request->getParam($this->requestFieldName) : null;
     }
@@ -158,7 +161,7 @@ class DataProvider extends AbstractDataProvider
      * @param string $logo
      * @return string
      */
-    private function getLogoPath($logo)
+    private function getLogoPath(string $logo): string
     {
         return BP . '/pub/media/wholesale/partner/' . $logo;
     }
@@ -169,7 +172,7 @@ class DataProvider extends AbstractDataProvider
      * @param string $file
      * @return string
      */
-    private function getMimeType($file)
+    private function getMimeType(string $file): string
     {
         $extension = pathinfo($file, PATHINFO_EXTENSION);
         $mimeTypes = [

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Save partner controller
  *
@@ -89,7 +90,7 @@ class Save extends Action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();
         $data = $this->getRequest()->getPostValue();
@@ -104,7 +105,7 @@ class Save extends Action
             $id = $this->getRequest()->getParam('partner_id');
             if ($id) {
                 try {
-                    $model = $this->partnerRepository->getById($id);
+                    $model = $this->partnerRepository->getById((int)$id);
                 } catch (LocalizedException $e) {
                     $this->messageManager->addErrorMessage(__('This partner no longer exists.'));
                     return $resultRedirect->setPath('*/*/');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Image uploader model
  *
@@ -120,7 +121,7 @@ class ImageUploader
      * @param string $baseTmpPath
      * @return void
      */
-    public function setBaseTmpPath($baseTmpPath)
+    public function setBaseTmpPath(string $baseTmpPath): void
     {
         $this->baseTmpPath = $baseTmpPath;
     }
@@ -131,7 +132,7 @@ class ImageUploader
      * @param string $basePath
      * @return void
      */
-    public function setBasePath($basePath)
+    public function setBasePath(string $basePath): void
     {
         $this->basePath = $basePath;
     }
@@ -142,7 +143,7 @@ class ImageUploader
      * @param string[] $allowedExtensions
      * @return void
      */
-    public function setAllowedExtensions($allowedExtensions)
+    public function setAllowedExtensions(array $allowedExtensions): void
     {
         $this->allowedExtensions = $allowedExtensions;
     }
@@ -152,7 +153,7 @@ class ImageUploader
      *
      * @return string
      */
-    public function getBaseTmpPath()
+    public function getBaseTmpPath(): string
     {
         return $this->baseTmpPath;
     }
@@ -162,7 +163,7 @@ class ImageUploader
      *
      * @return string
      */
-    public function getBasePath()
+    public function getBasePath(): string
     {
         return $this->basePath;
     }
@@ -172,7 +173,7 @@ class ImageUploader
      *
      * @return string[]
      */
-    public function getAllowedExtensions()
+    public function getAllowedExtensions(): array
     {
         return $this->allowedExtensions;
     }
@@ -184,7 +185,7 @@ class ImageUploader
      * @param string $imageName
      * @return string
      */
-    public function getFilePath($path, $imageName)
+    public function getFilePath(string $path, string $imageName): string
     {
         return rtrim($path, '/') . '/' . ltrim($imageName, '/');
     }
@@ -195,7 +196,7 @@ class ImageUploader
      * @param string $imageName
      * @return string
      */
-    public function getMediaUrl($imageName)
+    public function getMediaUrl(string $imageName): string
     {
         return $this->storeManager
             ->getStore()
@@ -210,7 +211,7 @@ class ImageUploader
      * @return bool
      * @throws LocalizedException
      */
-    public function deleteFile($imageName)
+    public function deleteFile(string $imageName): bool
     {
         $basePath = $this->getBasePath();
         $path = $this->getFilePath($basePath, $imageName);
@@ -236,7 +237,7 @@ class ImageUploader
      * @return string
      * @throws LocalizedException
      */
-    public function moveFileFromTmp($imageName)
+    public function moveFileFromTmp(string $imageName): string
     {
         $baseTmpPath = $this->getBaseTmpPath();
         $basePath = $this->getBasePath();
@@ -314,7 +315,7 @@ class ImageUploader
      * @return array
      * @throws LocalizedException
      */
-    public function saveFileToTmpDir($fileId)
+    public function saveFileToTmpDir(string $fileId): array
     {
         $baseTmpPath = $this->getBaseTmpPath();
 

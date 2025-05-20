@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Logo column UI component
  *
@@ -45,7 +46,7 @@ class Logo extends Column
      * @param array $dataSource
      * @return array
      */
-    public function prepareDataSource(array $dataSource)
+    public function prepareDataSource(array $dataSource): array
     {
         if (isset($dataSource['data']['items'])) {
             $fieldName = $this->getData('name');

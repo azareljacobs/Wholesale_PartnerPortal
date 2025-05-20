@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Partner repository implementation
  *
@@ -61,6 +62,16 @@ class PartnerRepository implements PartnerRepositoryInterface
      * @var PartnerVisibilityService
      */
     private $visibilityService;
+    
+    /**
+     * @var \Magento\Framework\App\Cache\TypeListInterface
+     */
+    private $cacheTypeList;
+    
+    /**
+     * @var \Magento\PageCache\Model\Cache\Type
+     */
+    private $fullPageCache;
 
     /**
      * @param PartnerResource $resource
@@ -69,6 +80,8 @@ class PartnerRepository implements PartnerRepositoryInterface
      * @param PartnerSearchResultsInterfaceFactory $searchResultsFactory
      * @param CollectionProcessorInterface $collectionProcessor
      * @param PartnerVisibilityService $visibilityService
+     * @param \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList
+     * @param \Magento\PageCache\Model\Cache\Type $fullPageCache
      */
     public function __construct(
         PartnerResource $resource,
@@ -76,7 +89,9 @@ class PartnerRepository implements PartnerRepositoryInterface
         CollectionFactory $collectionFactory,
         PartnerSearchResultsInterfaceFactory $searchResultsFactory,
         CollectionProcessorInterface $collectionProcessor,
-        PartnerVisibilityService $visibilityService
+        PartnerVisibilityService $visibilityService,
+        \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
+        \Magento\PageCache\Model\Cache\Type $fullPageCache
     ) {
         $this->resource = $resource;
         $this->partnerFactory = $partnerFactory;
@@ -84,6 +99,8 @@ class PartnerRepository implements PartnerRepositoryInterface
         $this->searchResultsFactory = $searchResultsFactory;
         $this->collectionProcessor = $collectionProcessor;
         $this->visibilityService = $visibilityService;
+        $this->cacheTypeList = $cacheTypeList;
+        $this->fullPageCache = $fullPageCache;
     }
 
     /**
@@ -96,6 +113,17 @@ class PartnerRepository implements PartnerRepositoryInterface
     public function save(PartnerInterface $partner): PartnerInterface
     {
         try {
+            // Check if this is an existing partner being updated
+            $originalPartner = null;
+            if ($partner->getId()) {
+                try {
+                    // Load the original partner to detect changes
+                    $originalPartner = $this->getById($partner->getId());
+                } catch (NoSuchEntityException $e) {
+                    // Partner doesn't exist yet, which is fine for new partners
+                }
+            }
+            
             $this->resource->save($partner);
             
             // Invalidate cache entries for this partner
@@ -108,6 +136,12 @@ class PartnerRepository implements PartnerRepositoryInterface
             
             if ($slug && isset($this->partnerCache['slug_' . $slug])) {
                 unset($this->partnerCache['slug_' . $slug]);
+            }
+            
+            // If the active status has changed, we need to clean the cache
+            // to ensure the frontend reflects this change immediately
+            if ($originalPartner && $originalPartner->getIsActive() !== $partner->getIsActive()) {
+                $this->cleanCache($partner);
             }
         } catch (\Exception $exception) {
             throw new CouldNotSaveException(__($exception->getMessage()));
@@ -211,6 +245,9 @@ class PartnerRepository implements PartnerRepositoryInterface
             $partnerId = $partner->getId();
             $slug = $partner->getSlug();
             
+            // Clean cache before deletion to ensure frontend is updated
+            $this->cleanCache($partner);
+            
             $this->resource->delete($partner);
             
             // Invalidate cache entries for this partner
@@ -281,5 +318,38 @@ class PartnerRepository implements PartnerRepositoryInterface
         $searchResults->setTotalCount($collection->getSize());
         
         return $searchResults;
+    }
+    
+    /**
+     * Clean cache for a partner
+     *
+     * This method explicitly cleans the cache for a specific partner
+     * to ensure changes (especially active status changes) are immediately
+     * reflected on the frontend
+     *
+     * @param PartnerInterface $partner
+     * @return void
+     */
+    private function cleanCache(PartnerInterface $partner): void
+    {
+        // Clean block_html cache which stores blocks output
+        $this->cacheTypeList->cleanType('block_html');
+        
+        // Clean full page cache to ensure partner pages are refreshed
+        $this->cacheTypeList->cleanType('full_page');
+        
+        // If the partner implements IdentityInterface, clean by specific tags
+        if ($partner instanceof \Magento\Framework\DataObject\IdentityInterface) {
+            $cacheTags = $partner->getIdentities();
+            
+            // Add specific slug cache tag if not already included
+            if ($partner->getSlug()) {
+                $cacheTags[] = Partner::CACHE_TAG . '_slug_' . $partner->getSlug();
+            }
+            
+            if (!empty($cacheTags)) {
+                $this->fullPageCache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, $cacheTags);
+            }
+        }
     }
 }

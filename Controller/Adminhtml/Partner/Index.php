@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Partner grid controller
  *
@@ -41,7 +42,7 @@ class Index extends Action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\ResultInterface
     {
         $resultPage = $this->resultPageFactory->create();
         $resultPage->setActiveMenu('Wholesale_PartnerPortal::partner');

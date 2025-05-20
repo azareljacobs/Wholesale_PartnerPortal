@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Generic button block for view page
  *
@@ -41,13 +42,13 @@ class GenericButton
      *
      * @return int|null
      */
-    public function getPartnerId()
+    public function getPartnerId(): ?int
     {
         try {
             $partnerId = $this->context->getRequest()->getParam('partner_id');
             if ($partnerId) {
-                $this->partnerRepository->getById($partnerId);
-                return $partnerId;
+                $this->partnerRepository->getById((int)$partnerId);
+                return (int)$partnerId;
             }
         } catch (NoSuchEntityException $e) {
             return null;
@@ -62,7 +63,7 @@ class GenericButton
      * @param array $params
      * @return string
      */
-    public function getUrl($route = '', $params = [])
+    public function getUrl(string $route = '', array $params = []): string
     {
         return $this->context->getUrlBuilder()->getUrl($route, $params);
     }

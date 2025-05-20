@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Partner model
  *
@@ -35,7 +36,7 @@ class Partner extends AbstractExtensibleModel implements IdentityInterface, Part
      *
      * @return void
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init(\Wholesale\PartnerPortal\Model\ResourceModel\Partner::class);
     }
@@ -45,7 +46,7 @@ class Partner extends AbstractExtensibleModel implements IdentityInterface, Part
      *
      * @return array
      */
-    public function getIdentities()
+    public function getIdentities(): array
     {
         $identities = [self::CACHE_TAG];
         

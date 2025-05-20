@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Delete partner logo controller
  *
@@ -61,7 +62,7 @@ class DeleteImage extends Action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\ResultInterface
     {
         $filename = $this->getRequest()->getParam('filename');
         $partnerId = $this->getRequest()->getParam('partner_id');

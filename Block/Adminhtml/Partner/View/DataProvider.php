@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Partner View Data Provider
  *
@@ -82,7 +83,7 @@ class DataProvider extends AbstractDataProvider
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         if (isset($this->loadedData)) {
             return $this->loadedData;
@@ -91,7 +92,7 @@ class DataProvider extends AbstractDataProvider
         $partnerId = $this->request->getParam('partner_id');
         if ($partnerId) {
             try {
-                $partner = $this->partnerRepository->getById($partnerId);
+                $partner = $this->partnerRepository->getById((int)$partnerId);
                 $this->loadedData[$partnerId] = $partner->getData();
                 
                 // Format logo data for display
