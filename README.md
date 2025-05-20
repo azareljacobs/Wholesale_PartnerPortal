@@ -102,12 +102,7 @@ This interface provides methods for managing `Partner` entities.
 -   `deleteById($partnerId)`: Deletes a partner by its ID.
 -   `getList(SearchCriteriaInterface $searchCriteria)`: Retrieves a list of partners based on search criteria, returning `PartnerSearchResultsInterface`.
 
-**Repository Improvements**:
-- Added optional filtering in the repository for active/inactive partners
-- Implemented repository-level caching for partner entities to improve performance
-- Added new dedicated methods like `getActiveById()` and `getActiveBySlug()` to centralise business logic
-- Created `getActiveList()` method for filtering collections
-- Ensured consistent behaviour across all application entry points
+The repository offers features like optional filtering for active/inactive partners and repository-level caching. It also provides dedicated methods such as `getActiveById()`, `getActiveBySlug()`, and `getActiveList()` to keep business logic clean and behavior consistent.
 
 ### GraphQL Schema
 
@@ -207,13 +202,7 @@ This model handles the logic for uploading partner logo images. Key functionalit
 - Generating unique file names to avoid conflicts
 - Creating appropriate directory structure for storage
 
-**Improvements implemented**:
-- Added constants for all path elements (`BASE_TMP_PATH`, `BASE_PATH`, `ALLOWED_EXTENSIONS`) to eliminate hardcoded strings
-- Reduced excessive logging to improve performance
-- Implemented `getMediaUrl()` method to generate media URLs for partner logos
-- Added `deleteFile()` method for proper file cleanup
-- Improved error handling with more concise exception reporting
-- Separated file validation from storage operations
+This uploader uses constants for path elements (like `BASE_TMP_PATH` and `ALLOWED_EXTENSIONS`) rather than hardcoded strings. It also has a `getMediaUrl()` method for logo URLs, a `deleteFile()` method for cleaning up, and keeps file validation separate from storage. Error handling is straightforward.
 
 ### `Model\ResourceModel\`
 
@@ -270,40 +259,13 @@ The module has distinct functionalities for both the frontend and adminhtml area
 
 -   **Adminhtml**: Provides an interface for managing partners (CRUD operations, viewing listings, managing settings). This is evident from `Adminhtml` subdirectories in `Block`, `Controller`, `etc/adminhtml`, and `view/adminhtml`, as well as UI component configurations related to admin grids and forms.
 
-    **UI Component Configuration Improvements**:
-    - Standardised URL generation in JavaScript components to use proper Magento URL format
-    - Updated validation URL in url-key.js from 'wholesale/partner/validate' to 'wholesale_partner/partner/validate'
-    - Enhanced validation rules in partner_form.xml to match JavaScript validation
-    - Added max_text_length restriction (64 characters) and validate-no-html-tags validation to slug field
-    - Updated help text to provide clearer guidance on validation requirements
-
-    **JavaScript Component Improvements**:
-    - Enhanced client-side validation for URL keys to mirror server-side rules
-    - Added debounce functionality to prevent excessive processing during rapid typing
-    - Implemented real-time AJAX validation to check URL key uniqueness
-    - Added immediate feedback on URL key validity
-    - Maintained automated slug generation from partner names
-
-    **Image Delete Functionality Improvements**:
-    - Added new `DeleteImage` controller for handling AJAX requests
-    - Implemented real-time physical file deletion when the trash icon is clicked
-    - Updated JavaScript for immediate visual feedback when deleting images
-    - Ensured synchronization between database records and physical files
+    - UI component configurations now use standardized URL generation in JavaScript. Validation URLs have been updated (e.g., `url-key.js` now points to `wholesale_partner/partner/validate`), and `partner_form.xml` has beefed-up validation rules, like a 64-character limit and `validate-no-html-tags` for slugs. The help text is also clearer.
+    - The JavaScript components for URL keys have better client-side validation, a debounce function to avoid too many AJAX calls, real-time uniqueness checks, and instant feedback on whether a key is valid. It still auto-generates slugs from partner names.
+    - Deleting images is smoother now: there's a `DeleteImage` controller for AJAX calls, files are deleted from the server straight away, JavaScript gives immediate visual feedback, and the database stays in sync with the file system.
 
 -   **Frontend**: Displays partner information to website visitors. This is implemented through `frontend` subdirectories in `etc/frontend` and `view/frontend`, and the `Controller/Partners` directory.
-
-    **Block Class Improvements**:
-    - Standardised access modifiers to use consistent `private` visibility for class properties
-    - Enhanced PHPDoc comments in block methods for better clarity
-    - All block classes now properly utilize the `PartnerMediaUrlService` for logo URL generation
-    - Removed direct ObjectManager usage in favor of proper dependency injection
-
-    **Template Improvements**:
-    - Added structured data markup with schema.org ItemList and Organization types for better SEO
-    - Implemented lazy loading for partner logos with `loading="lazy"` attribute
-    - Added pagination controls for the partner list
-    - Implemented fallback image handling for partners without logos
-    - Improved description handling to preserve allowed HTML formatting
+    - Block classes now consistently use `private` for properties, have more detailed PHPDoc comments, and use the `PartnerMediaUrlService` for logo URLs. We've also made sure they use dependency injection instead of calling ObjectManager directly.
+    - The frontend templates now include structured data (schema.org ItemList and Organization types) for SEO. Partner logos use lazy loading (`loading="lazy"`), there are pagination controls for the list, fallback images if a logo is missing, and descriptions handle HTML formatting better.
 
 ## 10. Usage Instructions
 
@@ -460,13 +422,7 @@ For detailed GraphQL API documentation, see `docs/graphql.md` in the module dire
     -   **Frontend Controllers**: Handle frontend display including the partner list (`Partners/Index.php`) and partner detail view (`Partners/View.php`).
     -   **Security**: Frontend controllers implement checks to ensure only active partners are displayed to visitors.
 
-    **Controller Improvements**:
-    - Implemented `PartnerVisibilityService` to centralise partner visibility rules
-    - Added `PartnerDataSanitizerService` to extract data validation and sanitisation logic
-    - Created `PartnerLogoService` to handle file operations for partner logos
-    - Implemented consistent approach for error handling across the module
-    - Eliminated duplicated visibility checking code between controllers and GraphQL resolvers
-    - Moved input sanitisation from controllers to dedicated services
+    - Controllers now make use of the `PartnerVisibilityService` for consistent visibility rules, the `PartnerDataSanitizerService` for cleaning up data, and the `PartnerLogoService` for handling logo uploads. Error handling is more consistent, we've cut down on duplicated visibility checks, and input sanitization now happens in dedicated services.
 
 -   **Blocks**:
     -   **Admin Blocks**: Prepare data and UI for admin forms and grids.
@@ -513,13 +469,6 @@ For detailed GraphQL API documentation, see `docs/graphql.md` in the module dire
 -   HTML content in partner descriptions is handled securely while preserving formatting.
 -   Logo URL generation logic has been centralised in the `PartnerMediaUrlService` to eliminate duplication.
 
-**Code Quality Improvements**:
-- Added comprehensive PHPDoc comments to all methods with detailed parameter descriptions
-- Enhanced the codebase with return type hints and scalar type hints
-- Standardised access modifiers to follow consistent patterns
-- Improved method signatures for better type safety and interface consistency
-- Created custom search results implementation for better type compatibility
-- Added proper type casting for numeric and boolean values
-- Enhanced exception handling with specialized error types
+- Throughout the codebase, you'll find comprehensive PHPDoc comments, return type hints, and scalar type hints. Access modifiers are standardized, method signatures are improved for better type safety, and there's a custom search results implementation for type compatibility. We've also added proper type casting and more specific exception types for better error handling.
 
 This documentation provides a comprehensive overview of the `Wholesale_PartnerPortal` module. The module follows a service-oriented architecture with proper separation of concerns, making it maintainable, performant, and extensible.
