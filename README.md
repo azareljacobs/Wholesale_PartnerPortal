@@ -492,3 +492,47 @@ After making changes to the module, you should test it to ensure everything work
 5. **Test in different browsers**:
    - Verify that the pages display correctly in different browsers
    - Check that the responsive design works on different screen sizes
+
+
+
+# TODO
+
+### Media & Image Handling
+- Implement a cron job to clean unused files from `/media/tmp/wholesale/partner/`, ideally deleting files older than 24 hours.
+- Ensure consistent file naming during `moveLogoToPermanentStorage()` (e.g. lowercase, safe characters).
+- Add support for duplicate file handling (e.g. hash or incremented filenames).
+- Move fallback logo URL logic to a configurable value or service constant.
+- Restrict allowed file types and sizes more strictly in `ImageUploader`.
+- Add admin UI feedback for upload errors and validation failures.
+- Add test coverage for image upload/delete behaviour, including edge cases.
+
+### Value Objects & Domain Clarity
+- Refactor primitive fields such as `slug`, `contact_email`, `logo`, and `website` into dedicated value objects (`PartnerSlug`, `EmailAddress`, `LogoImage`, `WebsiteUrl`) to encapsulate validation, formatting, and equality logic.
+- Replace direct `string` usage in `PartnerInterface` setters and service layer with these value objects, ensuring conversion is handled internally for persistence.
+- Update `PartnerDataSanitizerService` and `PartnerCommandService` to construct and validate these value objects during input processing.
+- Ensure all entity comparisons and filtering logic (e.g. matching slugs or emails) use value object equality rather than raw strings.
+- Extract `PartnerSlug`, `EmailAddress`, and `WebsiteUrl` into dedicated value objects to encapsulate validation and formatting, and enable isolated unit testing.
+
+### Unit Testability & Refactoring
+- Move logo-specific input logic (`processLogoData()`) out of `PartnerDataSanitizerService` into a dedicated service or helper to separate concerns and simplify tests.
+- Ensure all services rely on explicit constructor-injected dependencies; wrap file operations and image handling in interfaces to enable mocking in tests.
+- Replace raw associative arrays (e.g. form data) with well-structured DTOs or builder patterns for predictable test input construction.
+- Add test-specific factories or builders to streamline generation of valid/invalid partner input data in test cases.
+- Add unit tests for each value object to cover validation rules and comparison behaviour.
+- Continue to encapsulate domain logic in `CommandService` and `QueryService` classes, avoiding behavioural code in models or repositories.
+
+### Extension Attributes & API Readiness
+- Add `etc/extension_attributes.xml` to declare attributes extending `PartnerInterface`.
+- Implement `getExtensionAttributes()` and `setExtensionAttributes()` in the `Partner` entity model.
+- Populate extension attributes in the repository layer to expose dynamic partner data.
+- Optionally expose extension attributes via GraphQL or API response DTOs.
+
+
+### Frontend Data Handling & Consistency
+- Refactor `Block\PartnerList` and `Block\PartnerView` to use `PartnerQueryService` instead of direct repository or collection logic.
+- Move media URL rendering from block methods into ViewModels using `PartnerMediaUrlService`.
+- Ensure any future frontend forms (e.g. partner submissions or user-generated content) utilise `PartnerDataSanitizerService` for input cleaning.
+- Consider exposing `PartnerQueryService` results to frontend JSON endpoints for use with JavaScript components or headless UIs.
+- Aim to standardise all frontend partner data retrieval through services rather than direct model or repository access.
+- Refactor `ViewModel\Partner` and `ViewModel\Adminhtml\PartnerView` to use `PartnerQueryService` instead of `PartnerRepositoryInterface`.
+- Consider extracting pagination logic and filtering logic into `PartnerQueryService` to support richer frontend queries (e.g. featured only, search by keyword).
