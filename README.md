@@ -87,6 +87,8 @@ The `etc/di.xml` file configures various aspects of the module's dependency inje
         - `requestFieldName`: `partner_id`
         - This provider is responsible for fetching and preparing data for the partner form, including handling file uploads like the logo image.
 
+        This section also includes explicit constructor argument wiring for command/query services such as `PartnerCommandService` and `PartnerQueryService`. While Magento can resolve these dependencies automatically via constructor type hints, defining them explicitly in `di.xml` improves clarity, supports integration test overrides, and enables future flexibility for swapping dependencies without changing the class code.
+
 ## 6. API Layer
 
 The API layer defines service contracts for the module.
@@ -495,6 +497,7 @@ After making changes to the module, you should test it to ensure everything work
 
 
 
+
 # TODO
 
 ### Media & Image Handling
@@ -528,11 +531,22 @@ After making changes to the module, you should test it to ensure everything work
 - Optionally expose extension attributes via GraphQL or API response DTOs.
 
 
-### Frontend Data Handling & Consistency
-- Refactor `Block\PartnerList` and `Block\PartnerView` to use `PartnerQueryService` instead of direct repository or collection logic.
 - Move media URL rendering from block methods into ViewModels using `PartnerMediaUrlService`.
-- Ensure any future frontend forms (e.g. partner submissions or user-generated content) utilise `PartnerDataSanitizerService` for input cleaning.
 - Consider exposing `PartnerQueryService` results to frontend JSON endpoints for use with JavaScript components or headless UIs.
 - Aim to standardise all frontend partner data retrieval through services rather than direct model or repository access.
-- Refactor `ViewModel\Partner` and `ViewModel\Adminhtml\PartnerView` to use `PartnerQueryService` instead of `PartnerRepositoryInterface`.
+
+### Frontend Form Input Handling
+- Ensure any future frontend forms (e.g. partner submissions or user-generated content) utilise `PartnerDataSanitizerService` for input cleaning.
+
+### 📌 TODO: Expand Use of PartnerQueryService (CQRS Refactor)
+
+- Refactor `partner_listing.xml` grid data source to use `PartnerQueryService::getList()` instead of direct collection access. This will centralise filtering and support future business rule changes.
+- Update admin form ViewModel or block logic to use `PartnerQueryService::getById()` for retrieving partner data, replacing direct repository usage.
+- Refactor `Block\PartnerList` and `Block\PartnerView` to use `PartnerQueryService` instead of direct repository or collection logic.
+- Refactor `ViewModel\Partner` and `ViewModel\Adminhtml\PartnerView` to use `PartnerQueryService::getById()` or `getActiveBySlug()` where appropriate.
 - Consider extracting pagination logic and filtering logic into `PartnerQueryService` to support richer frontend queries (e.g. featured only, search by keyword).
+- Ensure all frontend-facing partner data access (controllers, blocks, view models) uses `PartnerQueryService` to enforce consistent visibility and sanitisation rules.
+- Plan for future frontend JSON/REST endpoints to use `PartnerQueryService::getList()` and `getBySlug()` as their data source, not raw repositories.
+- Add unit tests for all `PartnerQueryService` methods to independently verify filtering, visibility, and pagination logic.
+- Consider removing the in-memory `$partnerCache` from the repository once all consumers use the query service, which can internally apply light caching if necessary.
+- Review GraphQL resolvers and ensure they use only `PartnerQueryService` methods for data access.
