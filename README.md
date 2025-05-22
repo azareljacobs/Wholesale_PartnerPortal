@@ -244,7 +244,10 @@ The module has distinct functionalities for both the frontend and adminhtml area
 
     - UI component configurations use standardised URL generation in JavaScript. Validation URLs are updated (e.g., [`url-key.js`](view/adminhtml/web/js/form/element/url-key.js:0) points to `wholesale_partner/partner/validate`), and [`partner_form.xml`](view/adminhtml/ui_component/partner_form.xml:0) has validation rules, like a 64-character limit and `validate-no-html-tags` for slugs. The help text is clear.
     - The JavaScript components for URL keys have client-side validation, a debounce function to avoid too many AJAX calls, real-time uniqueness checks, and instant feedback on whether a key is valid. It auto-generates slugs from partner names.
+
     - Deleting images is smooth: there's a `DeleteImage` controller for AJAX calls, files are deleted from the server straight away, JavaScript gives immediate visual feedback, and the database stays in sync with the file system.
+
+The module also includes a `requirejs-config.js` file under `view/adminhtml`. These aliases serve as a foundation for extensibility and frontend testability. For instance, they enable test suites or downstream modules to cleanly override the file uploader or URL key components without altering layout XML or template code. This supports mocking and decouples JS module references from hardcoded paths, improving maintainability in both development and automated testing contexts.
 
 -   **Frontend**: Displays partner information to website visitors. This is implemented through `frontend` subdirectories in `etc/frontend` and `view/frontend`, and the `Controller/Partners` directory.
     - Block classes consistently use `private` for properties, have detailed PHPDoc comments, and use the [`PartnerMediaUrlService`](Model/Service/PartnerMediaUrlService.php:0) for logo URLs. They use dependency injection instead of calling ObjectManager directly.
@@ -426,6 +429,8 @@ The module provides GraphQL endpoints for accessing partner data programmaticall
     -   **Partner Listing**: Configured via `partner_listing.xml` and `partner_listing_data_source` in `di.xml`.
     -   **Partner Form**: Configured via `partner_form.xml` and `partner_form_data_source` in `di.xml`.
     -   **Custom Components**: Includes a custom URL key component (`url-key.js`) for automatic slug generation and validation, with enhanced AJAX validation and debouncing for better performance.
+
+    
 
 -   **GraphQL**:
     -   **Schema**: Defined in `schema.graphqls` with types for Partner, Partners (collection), and input types for filtering and sorting.
